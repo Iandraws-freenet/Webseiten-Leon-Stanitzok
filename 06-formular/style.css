@@ -1,0 +1,48 @@
+/* =========================================
+   Aufgabe 06 – Kontaktformular
+   ========================================= */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #e8eef5;
+}
+
+.formular {
+    /* TODO: Hintergrundfarbe weiß */
+    /* TODO: Breite 400px und zentrieren (margin: 40px auto;) */
+    /* TODO: Innenabstand 30px */
+    /* TODO: Abgerundete Ecken 8px */
+    /* TODO: Schatten: box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); */
+}
+
+.feld {
+    margin-bottom: 15px;
+}
+
+label {
+    /* TODO: display: block; (damit das Label über dem Feld steht) */
+    /* TODO: fette Schrift */
+    margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="email"],
+select,
+textarea {
+    /* TODO: Breite 100% */
+    /* TODO: Innenabstand 8px */
+    /* TODO: Rahmen 1px solid #cccccc */
+    /* TODO: Abgerundete Ecken 4px */
+    box-sizing: border-box;
+}
+
+button {
+    /* TODO: Hintergrundfarbe (z. B. #2a7ae2), weiße Schrift */
+    /* TODO: Innenabstand 10px 20px */
+    /* TODO: Kein Rahmen (border: none;) */
+    /* TODO: Abgerundete Ecken 4px */
+    /* TODO: Mauszeiger als Hand (cursor: pointer;) */
+}
+
+/* TODO: button:hover – eine dunklere Hintergrundfarbe */
+

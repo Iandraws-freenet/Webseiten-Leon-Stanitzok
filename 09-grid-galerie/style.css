@@ -1,0 +1,36 @@
+/* =========================================
+   Aufgabe 09 – Bildergalerie mit CSS Grid
+   ========================================= */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1e1e2f;
+    color: white;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+}
+
+.galerie {
+    max-width: 1000px;
+    margin: 0 auto;
+    /* TODO: display: grid; */
+    /* TODO: 3 gleich breite Spalten */
+    /* TODO: Abstand 15px */
+}
+
+.galerie img {
+    /* TODO: Breite 100% */
+    /* TODO: Höhe 200px */
+    /* TODO: object-fit: cover; */
+    /* TODO: Abgerundete Ecken 8px */
+    display: block;
+}
+
+/* TODO: Media Query für Tablet (max-width: 800px) → 2 Spalten */
+
+
+/* TODO: Media Query für Handy (max-width: 500px) → 1 Spalte */
+

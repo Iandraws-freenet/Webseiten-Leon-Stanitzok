@@ -1,0 +1,55 @@
+/* =========================================
+   Aufgabe 08 – Digitale Visitenkarte
+   ========================================= */
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #dfe6ed;
+    /* TODO: Karte in der Bildschirmmitte zentrieren (siehe README-Tipp) */
+}
+
+.karte {
+    /* TODO: weißer Hintergrund */
+    /* TODO: Breite 320px */
+    /* TODO: Innenabstand 30px */
+    /* TODO: Abgerundete Ecken 15px */
+    /* TODO: Schatten */
+    /* TODO: Text zentrieren */
+}
+
+.profilbild {
+    /* TODO: Breite und Höhe 120px */
+    /* TODO: rund machen (border-radius: 50%) */
+    /* TODO: Rahmen 4px solid + Farbe */
+}
+
+.beruf {
+    /* TODO: graue Farbe, Schriftgröße 14px */
+}
+
+.beschreibung {
+    /* TODO: Zeilenabstand 1.5 */
+}
+
+.tags {
+    /* TODO: Tags nebeneinander und zentriert (flex + justify-content + gap) */
+    /* TODO: flex-wrap: wrap; damit sie umbrechen können */
+}
+
+.tag {
+    /* TODO: Hintergrundfarbe + Schriftfarbe */
+    /* TODO: Innenabstand 5px 12px */
+    /* TODO: Stark abgerundete Ecken (20px) */
+    /* TODO: Schriftgröße 13px */
+}
+
+.button {
+    /* TODO: display: inline-block; */
+    /* TODO: Außenabstand oben 20px */
+    /* TODO: Hintergrundfarbe, weiße Schrift, keine Unterstreichung */
+    /* TODO: Innenabstand 10px 20px, abgerundete Ecken */
+}
+
+/* TODO: .button:hover */
+

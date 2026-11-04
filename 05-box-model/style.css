@@ -1,0 +1,35 @@
+/* =========================================
+   Aufgabe 05 – Das Box-Model
+   ========================================= */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #eeeeee;
+}
+
+.container {
+    /* TODO: Breite 400px */
+    /* TODO: Auf der Seite zentrieren (margin: 0 auto;) */
+}
+
+.box {
+    /* TODO: Breite 300px */
+    /* TODO: Innenabstand 20px */
+    /* TODO: Rahmen 2px solid + Farbe */
+    /* TODO: Außenabstand 20px */
+    /* TODO: Abgerundete Ecken 10px */
+}
+
+.box-rot {
+    /* TODO: Hintergrundfarbe (z. B. #ffcccc) */
+}
+
+.box-gruen {
+    /* TODO: Hintergrundfarbe (z. B. #ccffcc) */
+}
+
+.box-blau {
+    /* TODO: Hintergrundfarbe (z. B. #cce0ff) */
+}
+
+/* BONUS: Was passiert mit box-sizing: border-box? Antwort hier als Kommentar: */

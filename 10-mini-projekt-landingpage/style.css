@@ -1,0 +1,92 @@
+/* =========================================
+   Aufgabe 10 – Mini-Projekt: Landingpage
+   ========================================= */
+
+/* ---------- Farben als Variablen ---------- */
+:root {
+    /* TODO: Passe die Farben an dein Projekt an */
+    --hauptfarbe: #2a7ae2;
+    --dunkel: #222831;
+    --hell: #f5f7fa;
+    --weiss: #ffffff;
+}
+
+/* ---------- Grundeinstellungen ---------- */
+* {
+    box-sizing: border-box;
+}
+
+html {
+    /* TODO: weiches Scrollen */
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: var(--dunkel);
+}
+
+section {
+    padding: 60px 30px;
+}
+
+h2 {
+    text-align: center;
+}
+
+/* ---------- Header ---------- */
+header {
+    /* TODO: Hintergrund var(--dunkel), Flexbox, Logo links / Menü rechts */
+}
+
+/* TODO: .logo, nav ul, nav a, nav a:hover */
+
+
+/* ---------- Hero ---------- */
+.hero {
+    /* TODO: min-height 60vh, Hintergrund, Inhalt mittig (flex, column) */
+}
+
+/* TODO: .button und .button:hover */
+
+
+/* ---------- Vorteile ---------- */
+.karten {
+    /* TODO: Grid mit 3 Spalten und Abstand */
+}
+
+.karte {
+    /* TODO: Hintergrund, Innenabstand, abgerundete Ecken, Schatten */
+}
+
+/* ---------- Über uns ---------- */
+#ueber-uns {
+    background-color: var(--hell);
+}
+
+.ueber-inhalt {
+    /* TODO: Bild und Text nebeneinander (flex, gap, align-items) */
+}
+
+.ueber-inhalt img {
+    /* TODO: max-width 100%, abgerundete Ecken */
+}
+
+/* ---------- Kontakt ---------- */
+/* TODO: Formular gestalten (siehe Aufgabe 06) */
+
+
+/* ---------- Footer ---------- */
+footer {
+    /* TODO: Hintergrund var(--dunkel), helle Schrift, zentriert, Innenabstand */
+}
+
+/* ---------- Handy (Responsive) ---------- */
+@media (max-width: 700px) {
+    /* TODO: Karten untereinander (1 Spalte) */
+
+    /* TODO: Über-uns-Bereich untereinander (flex-direction: column) */
+
+    /* TODO: Header untereinander */
+}

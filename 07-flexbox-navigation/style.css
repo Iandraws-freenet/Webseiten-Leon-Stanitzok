@@ -1,0 +1,44 @@
+/* =========================================
+   Aufgabe 07 – Navigation mit Flexbox
+   ========================================= */
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+header {
+    /* TODO: Dunkle Hintergrundfarbe (z. B. #222831) */
+    /* TODO: Innenabstand 15px 30px */
+    /* TODO: display: flex; */
+    /* TODO: Logo links, Menü rechts (justify-content) */
+    /* TODO: Vertikal mittig (align-items) */
+}
+
+.logo {
+    color: #00adb5;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+nav ul {
+    /* TODO: Aufzählungspunkte entfernen */
+    /* TODO: margin und padding auf 0 */
+    /* TODO: display: flex; */
+    /* TODO: Abstand zwischen den Links 20px (gap) */
+}
+
+nav a {
+    /* TODO: Weiße Schrift */
+    /* TODO: Keine Unterstreichung (text-decoration) */
+}
+
+/* TODO: nav a:hover – andere Farbe beim Drüberfahren */
+
+
+/* TODO: .aktiv – aktiven Link hervorheben */
+
+
+main {
+    padding: 30px;
+}
