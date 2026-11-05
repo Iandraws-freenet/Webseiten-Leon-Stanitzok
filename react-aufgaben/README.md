@@ -1,6 +1,6 @@
-# React-Aufgaben: Sport-Apps ⚽🏀🏊
+# React-Aufgaben: Sport- und Spiele-Apps ⚽🏀🏊👑
 
-In diesen 3 Aufgaben baust du kleine **Sport-Apps** mit **React**.
+In diesen 4 Aufgaben baust du kleine **Sport- und Spiele-Apps** mit **React**.
 Die Daten (Teams, Wappen, Sportler) kommen **live aus dem Internet**.
 
 **Das JavaScript ist komplett fertig.** Du schreibst nur:
@@ -33,13 +33,14 @@ Deine App  ◀──── Liste mit Teams, Wappen ...  ────  Sport-Serv
 
 Das Bestellen macht der Befehl `fetch`. Den haben wir schon für dich geschrieben.
 
-## Die 3 Aufgaben
+## Die 4 Aufgaben
 
 | Nr. | Aufgabe | Die fertige App kann … | Du gestaltest … |
 |-----|---------|------------------------|-----------------|
 | 01 | [Fußball](01-fussball/) | 3 Ligen umschalten, Team anklicken → Details | Kopf, Team-Karten, Detail-Box, Liga-Buttons |
 | 02 | [Basketball](02-basketball/) | Teams suchen, sortieren, Favoriten ❤️ merken | Kopf, Team-Karten, Suchfeld, Sortier-Buttons |
 | 03 | [Schwimmen](03-schwimmen/) | Schwimm-Stars von Wikipedia laden, suchen, Verlauf | Kopf, Profil mit Foto, Lade- und Fehler-Box |
+| 04 | [Clash Royale](04-clash-royale/) | Alle Karten anzeigen, filtern, eigenes Deck aus 8 Karten bauen | Kopf, Karten mit Elixier-Tropfen, Seltenheits-Farben, Deck |
 
 Jede Aufgabe hat 2 Teile: **Teil 1 – HTML** und **Teil 2 – CSS**.
 Suche im Code nach **`DEIN HTML`** und **`DEIN CSS`**.
@@ -72,5 +73,6 @@ Suche im Code nach **`DEIN HTML`** und **`DEIN CSS`**.
 
 - Fußball und Basketball: [TheSportsDB](https://www.thesportsdb.com/) (kostenloser Test-Zugang)
 - Schwimmen: [Wikipedia](https://de.wikipedia.org/)
+- Clash Royale: [RoyaleAPI](https://royaleapi.com/) (Clash Royale ist eine Marke von Supercell)
 
 Viel Spaß! 🚀

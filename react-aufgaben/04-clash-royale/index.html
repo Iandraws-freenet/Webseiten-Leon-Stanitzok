@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clash-Royale-Deck</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- React und Babel aus dem Internet laden (nicht verändern) -->
+    <script src="https://unpkg.com/react@18.3.1/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone@7.26.4/babel.min.js"></script>
+</head>
+<body>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+
+        const { useState, useEffect } = React;
+
+        const API_URL = "https://royaleapi.github.io/cr-api-data/json/cards.json";
+        const BILD_URL = "https://royaleapi.github.io/cr-api-assets/cards-150/";
+        const DECK_GROESSE = 8;
+
+        const FILTER = [
+            { name: "Alle", wert: "Alle" },
+            { name: "Truppen", wert: "Troop" },
+            { name: "Gebäude", wert: "Building" },
+            { name: "Zauber", wert: "Spell" }
+        ];
+
+        const SELTENHEIT_DEUTSCH = {
+            Common: "Gewöhnlich",
+            Rare: "Selten",
+            Epic: "Episch",
+            Legendary: "Legendär",
+            Champion: "Champion"
+        };
+
+        const TYP_DEUTSCH = {
+            Troop: "Truppe",
+            Building: "Gebäude",
+            Spell: "Zauber"
+        };
+
+
+        // =====================================================
+        // Eine Karte in der großen Liste
+        // =====================================================
+        function Karte({ karte, imDeck, onKlick }) {
+            const bild = BILD_URL + karte.key + ".png";
+            const seltenheit = SELTENHEIT_DEUTSCH[karte.rarity];
+            const typ = TYP_DEUTSCH[karte.type];
+
+            let klassen = "karte " + karte.rarity.toLowerCase();
+            if (imDeck) klassen = klassen + " im-deck";
+
+            return (
+                <div className={klassen} onClick={onKlick}>
+
+                    {/* ✏️ DEIN HTML 2: Elixier (span className="elixier"), Bild (img),
+                                       Name (h3) und Seltenheit (p className="seltenheit") */}
+
+
+                </div>
+            );
+        }
+
+
+        // =====================================================
+        // Eine Karte oben im Deck
+        // =====================================================
+        function DeckKarte({ karte, onKlick }) {
+            const bild = BILD_URL + karte.key + ".png";
+
+            return (
+                <div className={"deck-karte " + karte.rarity.toLowerCase()} onClick={onKlick}>
+
+                    {/* ✏️ DEIN HTML 3: Bild (img) und Name (p) */}
+
+
+                </div>
+            );
+        }
+
+
+        // =====================================================
+        // Die App (JavaScript ist fertig)
+        // =====================================================
+        function App() {
+            const [karten, setKarten] = useState([]);
+            const [filter, setFilter] = useState("Alle");
+            const [deck, setDeck] = useState([]);
+
+            useEffect(() => {
+                fetch(API_URL)
+                    .then((antwort) => antwort.json())
+                    .then((daten) => {
+                        const normaleKarten = daten
+                            .filter((k) => !k.is_evolved)
+                            .sort((a, b) => a.elixir - b.elixir);
+                        setKarten(normaleKarten);
+                    });
+            }, []);
+
+            function karteUmschalten(karte) {
+                if (deck.some((k) => k.key === karte.key)) {
+                    setDeck(deck.filter((k) => k.key !== karte.key));
+                } else if (deck.length < DECK_GROESSE) {
+                    setDeck([...deck, karte]);
+                }
+            }
+
+            const angezeigteKarten = filter === "Alle"
+                ? karten
+                : karten.filter((k) => k.type === filter);
+
+            const anzahlImDeck = deck.length;
+            const durchschnitt = anzahlImDeck === 0
+                ? "0.0"
+                : (deck.reduce((summe, k) => summe + k.elixir, 0) / anzahlImDeck).toFixed(1);
+            const leerePlaetze = DECK_GROESSE - anzahlImDeck;
+
+            return (
+                <div className="seite">
+
+                    <header>
+                        {/* ✏️ DEIN HTML 1: Überschrift (h1) und Untertitel (p className="untertitel") */}
+
+
+                    </header>
+
+                    <section className="deck-box">
+                        <div className="deck">
+                            {deck.map((karte) => (
+                                <DeckKarte key={karte.key} karte={karte} onKlick={() => karteUmschalten(karte)} />
+                            ))}
+                            {Array.from({ length: leerePlaetze }).map((_, i) => (
+                                <div key={"leer" + i} className="leer-platz"></div>
+                            ))}
+                        </div>
+
+                        <div className="deck-info">
+                            {/* ✏️ DEIN HTML 4: Ø Elixier: {durchschnitt} 💧  und  {anzahlImDeck} / 8 Karten */}
+
+
+                        </div>
+                    </section>
+
+                    {anzahlImDeck === DECK_GROESSE && (
+                        <div className="deck-komplett">
+                            {/* ✏️ DEIN HTML 5: "🎉 Dein Deck ist komplett!" */}
+
+                        </div>
+                    )}
+
+                    <nav className="filter-leiste">
+                        {FILTER.map((f) => (
+                            <button
+                                key={f.wert}
+                                className={f.wert === filter ? "filter-button aktiv" : "filter-button"}
+                                onClick={() => setFilter(f.wert)}
+                            >
+                                {f.name}
+                            </button>
+                        ))}
+                    </nav>
+
+                    {karten.length === 0 && <p className="laden">Karten werden gemischt ... 🃏</p>}
+
+                    <div className="karten">
+                        {angezeigteKarten.map((karte) => (
+                            <Karte
+                                key={karte.key}
+                                karte={karte}
+                                imDeck={deck.some((k) => k.key === karte.key)}
+                                onKlick={() => karteUmschalten(karte)}
+                            />
+                        ))}
+                    </div>
+
+                    <footer>
+                        {/* ✏️ DEIN HTML 6: "Daten und Bilder: RoyaleAPI" und "Gebaut von DEIN NAME" */}
+
+
+                    </footer>
+
+                </div>
+            );
+        }
+
+        ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+
+    </script>
+</body>
+</html>
