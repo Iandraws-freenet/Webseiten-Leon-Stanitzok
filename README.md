@@ -35,6 +35,11 @@ Die Aufgaben werden langsam schwieriger – fang also bei Aufgabe 01 an.
 Wenn du mit HTML und CSS fertig bist, geht es weiter mit den
 **[JavaScript-Übungen](javascript-uebungen/)** (10 klassische Übungen, ohne Vorkenntnisse).
 
+## Und dann: React
+
+Zum Schluss baust du echte **Sport-Apps** mit React und Live-Daten aus dem Internet:
+**[React-Aufgaben](react-aufgaben/)**: ⚽ Fußball, 🏀 Basketball und 🏊 Schwimmen.
+
 ## Hilfreiche Links
 
 - [SELFHTML (Deutsch)](https://wiki.selfhtml.org/)

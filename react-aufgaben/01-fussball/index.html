@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fußball-App</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- React und Babel aus dem Internet laden (nicht verändern) -->
+    <script src="https://unpkg.com/react@18.3.1/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone@7.26.4/babel.min.js"></script>
+</head>
+<body>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+
+        const { useState, useEffect } = React;
+
+        const LIGEN = [
+            { name: "Bundesliga", code: "German_Bundesliga" },
+            { name: "Premier League", code: "English_Premier_League" },
+            { name: "La Liga", code: "Spanish_La_Liga" }
+        ];
+
+
+        // =====================================================
+        // Eine Karte für EIN Team
+        // =====================================================
+        function TeamKarte({ team, onKlick }) {
+            return (
+                <div className="karte" onClick={onKlick}>
+
+                    {/* ✏️ DEIN HTML 2: Wappen (img) und Name (h2) */}
+
+
+                </div>
+            );
+        }
+
+
+        // =====================================================
+        // Die Detail-Box, wenn man ein Team anklickt
+        // =====================================================
+        function Details({ team, onSchliessen }) {
+
+            // Fertig: kurzer Text (deutsch oder englisch) und Webseite
+            const text = team.strDescriptionDE || team.strDescriptionEN || "";
+            const beschreibung = text.slice(0, 300) + " ...";
+            const webseite = "https://" + team.strWebsite;
+
+            return (
+                <div className="details">
+                    <button className="schliessen" onClick={onSchliessen}>✕</button>
+
+                    {/* ✏️ DEIN HTML 3: Name (h2), Gegründet, Stadion, Ort, Beschreibung, Link zur Webseite */}
+
+
+                </div>
+            );
+        }
+
+
+        // =====================================================
+        // Die App (JavaScript ist fertig)
+        // =====================================================
+        function App() {
+            const [liga, setLiga] = useState("German_Bundesliga");
+            const [teams, setTeams] = useState([]);
+            const [laedt, setLaedt] = useState(true);
+            const [ausgewaehlt, setAusgewaehlt] = useState(null);
+
+            useEffect(() => {
+                setLaedt(true);
+                setAusgewaehlt(null);
+                fetch("https://www.thesportsdb.com/api/v1/json/123/search_all_teams.php?l=" + liga)
+                    .then((antwort) => antwort.json())
+                    .then((daten) => {
+                        setTeams(daten.teams || []);
+                        setLaedt(false);
+                    });
+            }, [liga]);
+
+            return (
+                <div className="seite">
+
+                    <header>
+                        {/* ✏️ DEIN HTML 1: Überschrift (h1) und Untertitel (p className="untertitel") */}
+
+
+                    </header>
+
+                    <nav className="liga-leiste">
+                        {LIGEN.map((l) => (
+                            <button
+                                key={l.code}
+                                className={l.code === liga ? "liga-button aktiv" : "liga-button"}
+                                onClick={() => setLiga(l.code)}
+                            >
+                                {l.name}
+                            </button>
+                        ))}
+                    </nav>
+
+                    {laedt ? (
+                        <p className="laden">Lädt ... ⚽</p>
+                    ) : (
+                        <div className="karten">
+                            {teams.map((team) => (
+                                <TeamKarte key={team.idTeam} team={team} onKlick={() => setAusgewaehlt(team)} />
+                            ))}
+                        </div>
+                    )}
+
+                    {ausgewaehlt && (
+                        <Details team={ausgewaehlt} onSchliessen={() => setAusgewaehlt(null)} />
+                    )}
+
+                    <footer>
+                        {/* ✏️ DEIN HTML 4: "Gemacht von DEIN NAME" */}
+
+
+                    </footer>
+
+                </div>
+            );
+        }
+
+        ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+
+    </script>
+</body>
+</html>

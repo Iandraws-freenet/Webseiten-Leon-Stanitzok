@@ -1,0 +1,201 @@
+/* =====================================================
+   TEIL A – FERTIG: Layout (bitte nicht verändern)
+   ===================================================== */
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background-attachment: fixed;
+}
+
+.seite {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 30px 16px;
+    text-align: center;
+}
+
+/* Namens-Buttons nebeneinander */
+.schwimmer-leiste {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.schwimmer-button,
+.such-button,
+.verlauf-button {
+    min-height: 44px;
+    padding: 10px 18px;
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+
+.schwimmer-button:hover,
+.such-button:hover,
+.verlauf-button:hover {
+    transform: scale(1.06);
+}
+
+/* Suchfeld und Button in einer Zeile */
+.such-zeile {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.such-feld {
+    flex: 1;
+    max-width: 350px;
+    min-width: 0;
+    outline: none;
+}
+
+/* Profil */
+.profil {
+    animation: auftauchen 0.4s ease-out;
+}
+
+@keyframes auftauchen {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.foto {
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+}
+
+.profil p {
+    text-align: left;
+}
+
+/* Lade-Box: pulsiert */
+.laden {
+    animation: pulsieren 1s ease-in-out infinite;
+}
+
+@keyframes pulsieren {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.4; }
+}
+
+/* Fehler-Box: wackelt kurz */
+.fehler {
+    animation: wackeln 0.4s;
+}
+
+@keyframes wackeln {
+    0%, 100% { transform: translateX(0); }
+    25%      { transform: translateX(-8px); }
+    75%      { transform: translateX(8px); }
+}
+
+/* Verlauf */
+.verlauf {
+    margin-top: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Handy */
+@media (max-width: 500px) {
+    .such-zeile {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .such-feld {
+        max-width: none;
+    }
+
+    .foto {
+        width: 140px;
+        height: 140px;
+    }
+}
+
+
+/* =====================================================
+   TEIL B – ✏️ DEIN CSS
+   ===================================================== */
+
+/* CSS 1 – Seite */
+body {
+
+}
+
+/* CSS 2 – Überschrift und Untertitel */
+h1 {
+
+}
+
+.untertitel {
+
+}
+
+/* CSS 3 – Namens-Buttons */
+.schwimmer-button {
+
+}
+
+.schwimmer-button.aktiv {
+
+}
+
+/* CSS 4 – Suchfeld und Such-Button */
+.such-feld {
+
+}
+
+.such-button {
+
+}
+
+/* CSS 5 – Profil-Box */
+.profil {
+
+}
+
+/* CSS 6 – Foto */
+.foto {
+
+}
+
+/* CSS 7 – Text im Profil */
+.profil h2 {
+
+}
+
+.profil p {
+
+}
+
+.profil a {
+
+}
+
+/* CSS 8 – Lade-Box und Fehler-Box */
+.laden {
+
+}
+
+.fehler {
+
+}
+
+.emoji {
+
+}
+
+/* CSS 9 – Verlauf */
+.verlauf-button {
+
+}

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schwimm-App</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- React und Babel aus dem Internet laden (nicht verändern) -->
+    <script src="https://unpkg.com/react@18.3.1/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone@7.26.4/babel.min.js"></script>
+</head>
+<body>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+
+        const { useState } = React;
+
+        const WIKI_URL = "https://de.wikipedia.org/api/rest_v1/page/summary/";
+
+        // Hier kannst du weitere Namen hinzufügen
+        const SCHWIMMER = [
+            "Michael Phelps",
+            "Katie Ledecky",
+            "Florian Wellbrock",
+            "Franziska van Almsick",
+            "Britta Steffen"
+        ];
+
+
+        // =====================================================
+        // Das Profil einer Person
+        // =====================================================
+        function Profil({ info }) {
+            const link = info.content_urls ? info.content_urls.desktop.page : "#";
+
+            return (
+                <div className="profil">
+                    {info.thumbnail && (
+                        <img className="foto" src={info.thumbnail.source} alt={info.title} />
+                    )}
+
+                    {/* ✏️ DEIN HTML 2: Name (h2), Text (p) und Link "Mehr bei Wikipedia" (a) */}
+
+
+                </div>
+            );
+        }
+
+
+        // =====================================================
+        // Die App (JavaScript ist fertig)
+        // =====================================================
+        function App() {
+            const [info, setInfo] = useState(null);
+            const [laedt, setLaedt] = useState(false);
+            const [fehler, setFehler] = useState(false);
+            const [eingabe, setEingabe] = useState("");
+            const [verlauf, setVerlauf] = useState([]);
+
+            function ladeSchwimmer(name) {
+                if (name.trim() === "") return;
+                setLaedt(true);
+                setFehler(false);
+                fetch(WIKI_URL + encodeURIComponent(name.trim()))
+                    .then((antwort) => {
+                        if (!antwort.ok) throw new Error("Nicht gefunden");
+                        return antwort.json();
+                    })
+                    .then((daten) => {
+                        setInfo(daten);
+                        setLaedt(false);
+                        setVerlauf((alt) => [daten.title, ...alt.filter((n) => n !== daten.title)].slice(0, 5));
+                    })
+                    .catch(() => {
+                        setInfo(null);
+                        setFehler(true);
+                        setLaedt(false);
+                    });
+            }
+
+            function suchen(e) {
+                e.preventDefault();
+                ladeSchwimmer(eingabe);
+                setEingabe("");
+            }
+
+            return (
+                <div className="seite">
+
+                    <header>
+                        {/* ✏️ DEIN HTML 1: Überschrift (h1) und Untertitel (p className="untertitel") */}
+
+
+                    </header>
+
+                    <div className="schwimmer-leiste">
+                        {SCHWIMMER.map((name) => (
+                            <button
+                                key={name}
+                                className={info && info.title === name ? "schwimmer-button aktiv" : "schwimmer-button"}
+                                onClick={() => ladeSchwimmer(name)}
+                            >
+                                {name}
+                            </button>
+                        ))}
+                    </div>
+
+                    <form className="such-zeile" onSubmit={suchen}>
+                        <input
+                            className="such-feld"
+                            placeholder="Name eingeben ..."
+                            value={eingabe}
+                            onChange={(e) => setEingabe(e.target.value)}
+                        />
+                        <button className="such-button" type="submit">Suchen</button>
+                    </form>
+
+                    {laedt && (
+                        <div className="laden">
+                            {/* ✏️ DEIN HTML 3: Lade-Text, z. B. "Taucht ab ... 🌊" */}
+
+                        </div>
+                    )}
+
+                    {fehler && !laedt && (
+                        <div className="fehler">
+                            {/* ✏️ DEIN HTML 4: großes Emoji (p className="emoji") und "Leider nicht gefunden" */}
+
+                        </div>
+                    )}
+
+                    {info && !laedt && <Profil info={info} />}
+
+                    {verlauf.length > 0 && (
+                        <div className="verlauf">
+                            {/* ✏️ DEIN HTML 5: "Zuletzt angesehen:" in einem span */}
+
+                            {verlauf.map((name) => (
+                                <button key={name} className="verlauf-button" onClick={() => ladeSchwimmer(name)}>
+                                    {name}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+
+                </div>
+            );
+        }
+
+        ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+
+    </script>
+</body>
+</html>
