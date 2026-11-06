@@ -106,117 +106,74 @@ body {
 
 
 /* =====================================================
-   TEIL B – ✏️ DEIN CSS  (Spurs-Look: Schwarz und Silber)
+   TEIL B – ✏️ DEIN CSS
    ===================================================== */
 
 /* CSS 1 – Seite */
 body {
-    background: linear-gradient(180deg, #000000, #2b2b2b);
-    color: #ffffff;
-    font-family: Arial, Helvetica, sans-serif;
+
 }
 
 /* CSS 2 – Überschrift, Untertitel, Zähler */
 h1 {
-    font-size: 44px;
-    color: #c4ced4;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 5px;
+
 }
 
 .untertitel {
-    font-size: 18px;
-    color: #8a8d8f;
-    margin-top: 0;
+
 }
 
 .zaehler {
-    font-size: 16px;
-    color: #c4ced4;
+
 }
 
 /* CSS 3 – Suchfeld */
 .suche {
-    padding: 12px 20px;
-    font-size: 16px;
-    border: none;
-    border-radius: 30px;
-    background-color: #c4ced4;
-    color: #000000;
+
 }
 
 /* CSS 4 – Sortier-Buttons */
 .sortier-button {
-    background-color: #000000;
-    color: #c4ced4;
-    border: 2px solid #c4ced4;
-    border-radius: 20px;
-    font-weight: bold;
+
 }
 
 .sortier-button.aktiv {
-    background-color: #c4ced4;
-    color: #000000;
+
 }
 
 /* CSS 5 – Karte */
 .karte {
-    background-color: #1a1a1a;
-    border: 2px solid #8a8d8f;
-    padding: 20px;
-    border-radius: 16px;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6);
-}
 
-/* Extra: Favoriten in Silber */
-.karte.favorit {
-    border-color: #c4ced4;
-    box-shadow: 0 0 18px #c4ced4;
 }
 
 /* CSS 6 – Logo und Text in der Karte */
 .karte img {
-    width: 100px;
-    height: 100px;
+
 }
 
 .karte h2 {
-    font-size: 18px;
-    color: #c4ced4;
+
 }
 
 .karte p {
-    margin: 4px 0;
-    color: #bbbbbb;
+
 }
 
 /* CSS 7 – Abkürzung */
 .kurz {
-    background-color: #c4ced4;
-    color: #000000;
-    font-weight: bold;
-    padding: 4px 10px;
-    border-radius: 8px;
-    margin-bottom: 8px;
+
 }
 
 /* CSS 8 – Herz-Button */
 .herz {
-    background-color: #333333;
-    font-size: 24px;
-    margin-top: 12px;
+
 }
 
 /* CSS 9 – Nichts gefunden */
 .nichts-gefunden {
-    background-color: #1a1a1a;
-    border: 2px solid #8a8d8f;
-    padding: 20px;
-    border-radius: 16px;
+
 }
 
 .emoji {
-    font-size: 60px;
-    margin: 0;
+
 }
