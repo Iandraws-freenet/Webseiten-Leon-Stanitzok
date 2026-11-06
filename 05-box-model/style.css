@@ -7,12 +7,20 @@ body {
     background-color: #eeeeee;
 }
 
-.container {
+.container { width: 400px; 
+    margin: 0 auto
     /* TODO: Breite 400px */
     /* TODO: Auf der Seite zentrieren (margin: 0 auto;) */
 }
 
 .box {
+    width : 300px; 
+    padding: 20px;
+    border: 2px solid #d31885 ;
+    margin: 20px;
+    border-radius: 10px
+    
+
     /* TODO: Breite 300px */
     /* TODO: Innenabstand 20px */
     /* TODO: Rahmen 2px solid + Farbe */
@@ -20,15 +28,15 @@ body {
     /* TODO: Abgerundete Ecken 10px */
 }
 
-.box-rot {
+.box-rot { background-color: aquamarine;
     /* TODO: Hintergrundfarbe (z. B. #ffcccc) */
 }
 
-.box-gruen {
+.box-gruen { background-color: #d31885;
     /* TODO: Hintergrundfarbe (z. B. #ccffcc) */
 }
 
-.box-blau {
+.box-blau {background-color: blue;
     /* TODO: Hintergrundfarbe (z. B. #cce0ff) */
 }
 
