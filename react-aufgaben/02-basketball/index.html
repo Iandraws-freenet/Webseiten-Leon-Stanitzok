@@ -37,7 +37,11 @@
 
                     {/* ✏️ DEIN HTML 3: Logo (img), Name (h2), Abkürzung (span className="kurz"),
                                        Gründungsjahr (p) und Halle (p) */}
-
+                    <img src={team.strBadge} alt={team.strTeam} />
+                    <h2>{team.strTeam}</h2>
+                    <span className="kurz">{team.strTeamShort}</span>
+                    <p>seit {team.intFormedYear}</p>
+                    <p>{team.strStadium}</p>
 
                     <button className="herz" onClick={onFavorit}>
                         {istFavorit ? "❤️" : "🤍"}
@@ -86,7 +90,8 @@
 
                     <header>
                         {/* ✏️ DEIN HTML 1: Überschrift (h1) und Untertitel (p className="untertitel") */}
-
+                        <h1>🏀 NBA-Teams</h1>
+                        <p className="untertitel">Go Spurs Go! Finde dein Lieblings-Team!</p>
 
                     </header>
 
@@ -110,7 +115,7 @@
                     </div>
 
                     {/* ✏️ DEIN HTML 2: Zähler (p className="zaehler") */}
-
+                    <p className="zaehler">{anzahlTeams} Teams · {anzahlFavoriten} Favoriten ❤️</p>
 
                     <div className="karten">
                         {gefilterteTeams.map((team) => (
@@ -128,7 +133,8 @@
 
                             {/* ✏️ DEIN HTML 4: ein großes Emoji (z. B. in einem p className="emoji")
                                                und der Text "Kein Team gefunden" */}
-
+                            <p className="emoji">😢</p>
+                            <p>Kein Team gefunden</p>
 
                         </div>
                     )}
