@@ -49,6 +49,22 @@ img {
     cursor: pointer;
 }
 
+/* ---------- Drag & Drop ---------- */
+.slot[draggable="true"] {
+    cursor: grab;
+}
+
+.slot[draggable="true"]:active {
+    cursor: grabbing;
+}
+
+/* Hier kann man gerade etwas ablegen */
+.werkbank-platz.drueber,
+.hotbar.drueber {
+    outline: 3px dashed #ffff55;
+    outline-offset: 2px;
+}
+
 /* ---------- Crafting: 3x3-Feld, Pfeil, Ergebnis ---------- */
 .crafting {
     display: flex;

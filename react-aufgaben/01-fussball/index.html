@@ -33,9 +33,9 @@
             return (
                 <div className="karte" onClick={onKlick}>
 
-                    {/* ✏️ DEIN HTML 2: Wappen (img) und Name (h2) */}
-
-
+                    {/* ✅ HTML 2: Wappen (img) und Name (h2) */}
+                    <img src={team.strBadge} alt={team.strTeam} />
+                    <h2>{team.strTeam}</h2>
                 </div>
             );
         }
@@ -78,8 +78,13 @@
                 <div className="details">
                     <button className="schliessen" onClick={onSchliessen}>✕</button>
 
-                    {/* ✏️ DEIN HTML 3: Name (h2), Gegründet, Stadion, Ort, Beschreibung, Link zur Webseite */}
-
+                    {/* ✅ HTML 3: Name (h2), Gegründet, Stadion, Ort, Beschreibung, Link zur Webseite */}
+                    <h2>{team.strTeam}</h2>
+                    <p><strong>Gegründet:</strong> {team.intFormedYear}</p>
+                    <p><strong>Stadion:</strong> {team.strStadium}</p>
+                    <p><strong>Ort:</strong> {team.strLocation}</p>
+                    <p>{beschreibung}</p>
+                    <a href={webseite} target="_blank">Zur Webseite</a>
 
                     {/* ===================== ⭐ ERWEITERUNG ===================== */}
                     <div className="mehr-infos">
@@ -174,9 +179,9 @@
                 <div className="seite">
 
                     <header>
-                        {/* ✏️ DEIN HTML 1: Überschrift (h1) und Untertitel (p className="untertitel") */}
-
-
+                        {/* ✅ HTML 1: Überschrift (h1) und Untertitel (p className="untertitel") */}
+                        <h1>⚽ Fußball-App</h1>
+                        <p className="untertitel">Die besten Teams aus Europa</p>
                     </header>
 
                     <nav className="liga-leiste">
@@ -206,9 +211,8 @@
                     )}
 
                     <footer>
-                        {/* ✏️ DEIN HTML 4: "Gemacht von DEIN NAME" */}
-
-
+                        {/* ✅ HTML 4: "Gemacht von DEIN NAME" */}
+                        <p>Gemacht von Leon, Denijel und Tom</p>
                     </footer>
 
                 </div>

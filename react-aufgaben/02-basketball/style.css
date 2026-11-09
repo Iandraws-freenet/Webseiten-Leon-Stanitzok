@@ -226,71 +226,113 @@ body {
 
 /* CSS 1 – Seite */
 body {
-
+    background-color: #000000;
+    background: linear-gradient(180deg, #000000, #2b2b2b);
+    color: #ffffff;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 /* CSS 2 – Überschrift, Untertitel, Zähler */
 h1 {
-
+    font-size: 44px;
+    margin: 0 0 8px;
+    color: #c4ced4;
+    text-transform: uppercase;
+    letter-spacing: 3px;
 }
 
 .untertitel {
-
+    margin: 0 0 20px;
+    font-size: 18px;
+    color: #ffffff;
 }
 
 .zaehler {
-
+    font-size: 15px;
+    color: #8a8d8f;
 }
 
 /* CSS 3 – Suchfeld */
 .suche {
-
+    padding: 12px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 30px;
+    background-color: #c4ced4;
+    color: #000000;
 }
 
 /* CSS 4 – Sortier-Buttons */
 .sortier-button {
-
+    background-color: #000000;
+    color: #c4ced4;
+    border: 2px solid #c4ced4;
+    border-radius: 20px;
+    font-size: 15px;
 }
 
 .sortier-button.aktiv {
-
+    background-color: #c4ced4;
+    color: #000000;
+    font-weight: bold;
 }
 
 /* CSS 5 – Karte */
 .karte {
-
+    background-color: #1a1a1a;
+    border: 2px solid #8a8d8f;
+    padding: 20px 12px;
+    border-radius: 14px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
 }
 
 /* CSS 6 – Logo und Text in der Karte */
 .karte img {
-
+    width: 90px;
+    height: 90px;
 }
 
 .karte h2 {
-
+    font-size: 17px;
+    margin: 12px 0 8px;
+    color: #c4ced4;
 }
 
 .karte p {
-
+    margin: 4px 0;
+    font-size: 14px;
+    color: #8a8d8f;
 }
 
 /* CSS 7 – Abkürzung */
 .kurz {
-
+    background-color: #c4ced4;
+    color: #000000;
+    font-weight: bold;
+    padding: 3px 10px;
+    border-radius: 6px;
+    margin-bottom: 6px;
 }
 
 /* CSS 8 – Herz-Button */
 .herz {
-
+    background-color: #2b2b2b;
+    font-size: 22px;
+    margin-top: 10px;
 }
 
 /* CSS 9 – Nichts gefunden */
 .nichts-gefunden {
-
+    background-color: #1a1a1a;
+    padding: 25px;
+    border-radius: 14px;
+    border: 2px dashed #8a8d8f;
+    color: #c4ced4;
 }
 
 .emoji {
-
+    font-size: 60px;
+    margin: 0;
 }
 
 

@@ -59,10 +59,12 @@
             return (
                 <div className={klassen} onClick={onKlick}>
 
-                    {/* ✏️ DEIN HTML 2: Elixier (span className="elixier"), Bild (img),
-                                       Name (h3) und Seltenheit (p className="seltenheit") */}
-
-
+                    {/* ✅ HTML 2: Elixier (span className="elixier"), Bild (img),
+                                   Name (h3) und Seltenheit (p className="seltenheit") */}
+                    <span className="elixier">{karte.elixir}</span>
+                    <img src={bild} alt={karte.name} />
+                    <h3>{karte.name}</h3>
+                    <p className="seltenheit">{seltenheit}</p>
                     {/* ⭐ Erweiterung: Info-Knopf (fertig) */}
                     <button
                         className="info-button"
@@ -140,9 +142,9 @@
             return (
                 <div className={"deck-karte " + karte.rarity.toLowerCase()} onClick={onKlick}>
 
-                    {/* ✏️ DEIN HTML 3: Bild (img) und Name (p) */}
-
-
+                    {/* ✅ HTML 3: Bild (img) und Name (p) */}
+                    <img src={bild} alt={karte.name} />
+                    <p>{karte.name}</p>
                 </div>
             );
         }
@@ -194,9 +196,9 @@
                 <div className="seite">
 
                     <header>
-                        {/* ✏️ DEIN HTML 1: Überschrift (h1) und Untertitel (p className="untertitel") */}
-
-
+                        {/* ✅ HTML 1: Überschrift (h1) und Untertitel (p className="untertitel") */}
+                        <h1>👑 Mein Clash-Royale-Deck</h1>
+                        <p className="untertitel">Baue dein bestes Deck!</p>
                     </header>
 
                     <section className="deck-box">
@@ -210,16 +212,16 @@
                         </div>
 
                         <div className="deck-info">
-                            {/* ✏️ DEIN HTML 4: Ø Elixier: {durchschnitt} 💧  und  {anzahlImDeck} / 8 Karten */}
-
-
+                            {/* ✅ HTML 4: Ø Elixier und Anzahl Karten */}
+                            <p>Ø Elixier: {durchschnitt} 💧</p>
+                            <p>{anzahlImDeck} / 8 Karten</p>
                         </div>
                     </section>
 
                     {anzahlImDeck === DECK_GROESSE && (
                         <div className="deck-komplett">
-                            {/* ✏️ DEIN HTML 5: "🎉 Dein Deck ist komplett!" */}
-
+                            {/* ✅ HTML 5: "🎉 Dein Deck ist komplett!" */}
+                            <p>🎉 Dein Deck ist komplett!</p>
 
                             {/* ⭐ ✏️ DEIN HTML 10: zwei Links (a className="link-button" target="_blank"):
                                                  📲 Deck im Spiel öffnen  mit {deckImSpiel}
@@ -266,9 +268,9 @@
                     )}
 
                     <footer>
-                        {/* ✏️ DEIN HTML 6: "Daten und Bilder: RoyaleAPI" und "Gebaut von DEIN NAME" */}
-
-
+                        {/* ✅ HTML 6: Quelle und Name */}
+                        <p>Daten und Bilder: RoyaleAPI</p>
+                        <p>Gebaut von Leon, Denijel und Tom</p>
                     </footer>
 
                 </div>

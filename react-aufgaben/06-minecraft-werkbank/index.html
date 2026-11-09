@@ -51,8 +51,15 @@
             sandstone: "blocks/sandstone"
         };
 
+        // Für Truhe und Bett gibt es in den Daten kein Item-Bild. Die liegen im Ordner "bilder".
+        const EIGENE_BILDER = {
+            chest: "bilder/chest.png",
+            white_bed: "bilder/white_bed.png"
+        };
+
         // Aus "minecraft:block/stone" wird die Bild-Adresse ".../blocks/stone.png"
         function bildAdresse(name, textur) {
+            if (EIGENE_BILDER[name]) return EIGENE_BILDER[name];
             let pfad = BESSERE_BILDER[name] || textur || "";
             pfad = pfad.replace("minecraft:", "");
             if (pfad.startsWith("block/")) pfad = "blocks/" + pfad.slice(6);
@@ -125,7 +132,16 @@
             const klassen = ausgewaehlt ? "slot ausgewaehlt" : "slot";
 
             return (
-                <div className={klassen} onClick={onKlick}>
+                <div
+                    className={klassen}
+                    onClick={onKlick}
+                    draggable={true}
+                    onDragStart={(e) => {
+                        // Drag & Drop (fertig): Item aus dem Inventar ziehen
+                        e.dataTransfer.setData("werkbank-item", JSON.stringify({ id: item.id }));
+                        e.dataTransfer.effectAllowed = "copyMove";
+                    }}
+                >
 
                     {/* ✏️ DEIN HTML 3: das Bild (img) mit alt UND title = {item.displayName}
                                        (title zeigt den Namen, wenn man mit der Maus drüberfährt) */}
@@ -139,9 +155,41 @@
         // =====================================================
         // Ein Platz im 3x3-Werkbank-Feld
         // =====================================================
-        function WerkbankPlatz({ item, onKlick }) {
+        function WerkbankPlatz({ item, onKlick, onAblegen, onWegziehen }) {
+            const [drueber, setDrueber] = useState(false);
+
             return (
-                <div className="slot werkbank-platz" onClick={onKlick}>
+                <div
+                    className={drueber ? "slot werkbank-platz drueber" : "slot werkbank-platz"}
+                    onClick={onKlick}
+                    draggable={item ? true : false}
+                    onDragStart={(e) => {
+                        // Drag & Drop (fertig): Item im Feld verschieben oder rausziehen
+                        e.dataTransfer.setData("werkbank-item", JSON.stringify({ id: item.id, vonPlatz: true }));
+                        e.dataTransfer.effectAllowed = "copyMove";
+                        onWegziehen("start");
+                    }}
+                    onDragEnd={(e) => {
+                        // Nirgendwo abgelegt (z. B. ins Inventar gezogen) → Item ist weg
+                        onWegziehen(e.dataTransfer.dropEffect === "none" ? "weg" : "ende");
+                    }}
+                    onDragEnter={(e) => {
+                        if (e.dataTransfer.types.includes("werkbank-item")) setDrueber(true);
+                    }}
+                    onDragOver={(e) => {
+                        if (!e.dataTransfer.types.includes("werkbank-item")) return;
+                        e.preventDefault();               // erlaubt das Ablegen
+                        e.dataTransfer.dropEffect = "move";
+                    }}
+                    onDragLeave={(e) => {
+                        if (!e.currentTarget.contains(e.relatedTarget)) setDrueber(false);
+                    }}
+                    onDrop={(e) => {
+                        e.preventDefault();
+                        setDrueber(false);
+                        onAblegen(JSON.parse(e.dataTransfer.getData("werkbank-item")));
+                    }}
+                >
                     {item && (
                         <>
                             {/* ✏️ DEIN HTML 4: das Bild (img) mit src={item.bild} und alt={item.displayName} */}
@@ -185,6 +233,8 @@
             const [hand, setHand] = useState(null);          // Item, das du gerade hältst
             const [geschafft, setGeschafft] = useState([]);  // Namen aller gebauten Items
             const [letztesItem, setLetztesItem] = useState(null);
+            const [gezogenVon, setGezogenVon] = useState(null);       // Drag & Drop: aus welchem Feld-Platz
+            const [hotbarDrueber, setHotbarDrueber] = useState(false); // Drag & Drop: Ergebnis über der Hotbar
 
             useEffect(() => {
                 Promise.all([
@@ -228,6 +278,28 @@
                 setFeld(neuesFeld);
             }
 
+            // ----- Drag & Drop (fertig) -----
+            function ablegen(index, daten) {
+                setFeld((altesFeld) => {
+                    const neuesFeld = [...altesFeld];
+                    if (daten.vonPlatz && gezogenVon !== null) neuesFeld[gezogenVon] = null; // verschieben
+                    neuesFeld[index] = daten.id;
+                    return neuesFeld;
+                });
+                setGezogenVon(null);
+            }
+
+            function wegziehen(index, was) {
+                if (was === "start") {
+                    setGezogenVon(index);
+                } else {
+                    if (was === "weg") {
+                        setFeld((altesFeld) => altesFeld.map((id, i) => (i === index ? null : id)));
+                    }
+                    setGezogenVon(null);
+                }
+            }
+
             function bauen() {
                 if (!ergebnisItem) return;
                 // Neues Item kommt vorne in die Hotbar, höchstens 9
@@ -246,7 +318,8 @@
             }
 
             const handName = hand ? hand.displayName : "nichts";
-            const anzahlGeschafft = geschafft.length;
+            // Nur Items zählen, die auch in den Rezept-Ideen stehen
+            const anzahlGeschafft = REZEPT_IDEEN.filter((name) => geschafft.includes(name)).length;
             const anzahlIdeen = REZEPT_IDEEN.length;
             const ideen = REZEPT_IDEEN.map(itemNachName).filter(Boolean);
             const inventarPlaetze = Array.from({ length: INVENTAR_GROESSE }, (_, i) => inventar[i] || null);
@@ -272,7 +345,13 @@
                         <div className="crafting">
                             <div className="werkbank">
                                 {feld.map((id, i) => (
-                                    <WerkbankPlatz key={i} item={id !== null ? items[id] : null} onKlick={() => platzKlicken(i)} />
+                                    <WerkbankPlatz
+                                        key={i}
+                                        item={id !== null ? items[id] : null}
+                                        onKlick={() => platzKlicken(i)}
+                                        onAblegen={(daten) => ablegen(i, daten)}
+                                        onWegziehen={(was) => wegziehen(i, was)}
+                                    />
                                 ))}
                             </div>
 
@@ -281,7 +360,16 @@
 
                             </div>
 
-                            <div className={ergebnisItem ? "slot ergebnis bereit" : "slot ergebnis"} onClick={bauen}>
+                            <div
+                                className={ergebnisItem ? "slot ergebnis bereit" : "slot ergebnis"}
+                                onClick={bauen}
+                                draggable={ergebnisItem ? true : false}
+                                onDragStart={(e) => {
+                                    // Drag & Drop (fertig): Ergebnis in die Hotbar ziehen
+                                    e.dataTransfer.setData("ergebnis", "ja");
+                                    e.dataTransfer.effectAllowed = "copyMove";
+                                }}
+                            >
                                 {ergebnisItem && (
                                     <>
                                         {/* ✏️ DEIN HTML 6: Bild vom Ergebnis (img mit src={ergebnisItem.bild})
@@ -309,7 +397,25 @@
                             ))}
                         </div>
 
-                        <div className="hotbar">
+                        <div
+                            className={hotbarDrueber ? "hotbar drueber" : "hotbar"}
+                            onDragEnter={(e) => {
+                                if (e.dataTransfer.types.includes("ergebnis")) setHotbarDrueber(true);
+                            }}
+                            onDragOver={(e) => {
+                                if (!e.dataTransfer.types.includes("ergebnis")) return;
+                                e.preventDefault();
+                                e.dataTransfer.dropEffect = "move";
+                            }}
+                            onDragLeave={(e) => {
+                                if (!e.currentTarget.contains(e.relatedTarget)) setHotbarDrueber(false);
+                            }}
+                            onDrop={(e) => {
+                                e.preventDefault();
+                                setHotbarDrueber(false);
+                                bauen();
+                            }}
+                        >
                             {hotbarPlaetze.map((item, i) => (
                                 <ItemSlot key={i} item={item} ausgewaehlt={hand && item && hand.id === item.id} onKlick={() => itemNehmen(item)} />
                             ))}

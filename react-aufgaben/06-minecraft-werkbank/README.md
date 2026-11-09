@@ -42,6 +42,12 @@ Das JavaScript ist **komplett fertig**: Items und über 2000 echte Rezepte laden
 5. Klick auf das Ergebnis → das Item landet in der **Hotbar** und in den Rezept-Ideen gibt es einen ✅
 6. Gebaute Items in der Hotbar kannst du auch wieder in die Hand nehmen und weiterbauen
 
+**Oder mit Drag & Drop 🖱️** (mit der Maus ziehen und loslassen):
+- Item aus dem Inventar oder der Hotbar **ins Feld ziehen** → es wird hingelegt
+- Item im Feld auf einen **anderen Platz ziehen** → es wird verschoben
+- Item aus dem Feld **rausziehen** (z. B. ins Inventar) → es ist weg
+- Das **Ergebnis in die Hotbar ziehen** → gebaut!
+
 Von den Start-Items hast du **unendlich viele**.
 
 **Probier zuerst diese Rezepte:**
@@ -130,7 +136,7 @@ border-color: #373737 #ffffff #ffffff #373737;  /* oben rechts unten links */
 - `<> ... </>` ist ein **leerer Behälter** in React. Schreib dein HTML einfach hinein.
 - Wenn die Seite weiß bleibt: **F12** → Konsole.
 - Die Namen sind auf **Englisch**, weil die Daten so aus dem Internet kommen.
-- Ein paar Items haben kein eigenes Bild in den Daten. Die Truhe sieht dann z. B. aus wie Holzbretter. Das ist kein Fehler von dir.
+- Für Truhe und Bett gibt es in den Daten kein Bild. Die beiden liegen deshalb im Ordner `bilder`. Lösch den Ordner nicht!
 
 ## Extra-Ideen
 - [ ] Zeige unter dem Ergebnis den Namen an: `{ergebnisItem.displayName}`
