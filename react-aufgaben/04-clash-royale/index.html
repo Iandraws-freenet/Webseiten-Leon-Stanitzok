@@ -48,7 +48,7 @@
         // =====================================================
         // Eine Karte in der großen Liste
         // =====================================================
-        function Karte({ karte, imDeck, onKlick }) {
+        function Karte({ karte, imDeck, onKlick, onInfo }) {
             const bild = BILD_URL + karte.key + ".png";
             const seltenheit = SELTENHEIT_DEUTSCH[karte.rarity];
             const typ = TYP_DEUTSCH[karte.type];
@@ -65,7 +65,55 @@
                     <img src={bild} alt={karte.name} />
                     <h3>{karte.name}</h3>
                     <p classname="seltenheit">{seltenheit}</p>
+        }
+        
+        // =====================================================
+        // ⭐ ERWEITERUNG: Infos zu einer Karte (Klick auf ℹ️)
+        // =====================================================
+        function KartenDetails({ karte, imDeck, deckVoll, onDeck, onSchliessen }) {
+            const bild = BILD_URL + karte.key + ".png";
+            const seltenheit = SELTENHEIT_DEUTSCH[karte.rarity];
+            const typ = TYP_DEUTSCH[karte.type];
+            const beschreibung = karte.description;
+            const arena = karte.arena === 0 ? "Trainingscamp" : "Arena " + karte.arena;
 
+            // Fertig: Links ins Internet
+            const royaleApi = "https://royaleapi.com/card/" + karte.key;
+            const wiki = "https://clashroyale.fandom.com/wiki/" + karte.name.replaceAll(" ", "_");
+            const youtube = "https://www.youtube.com/results?search_query=" + encodeURIComponent("Clash Royale " + karte.name);
+
+            let deckText = "➕ Ins Deck";
+            if (imDeck) deckText = "➖ Aus dem Deck";
+            else if (deckVoll) deckText = "Deck ist voll";
+
+            return (
+                <div className="overlay" onClick={onSchliessen}>
+                    <div className={"details " + karte.rarity.toLowerCase()} onClick={(e) => e.stopPropagation()}>
+                        <button className="schliessen" onClick={onSchliessen}>✕</button>
+
+                        {/* ✏️ DEIN HTML 7: großes Bild (img className="gross"), Name (h2)
+                                           und die Beschreibung (p className="beschreibung") */}
+
+
+                        <div className="werte">
+                            {/* ✏️ DEIN HTML 8: vier kleine Kästchen (div className="wert"), in jedem
+                                               ein Titel (span) und ein Wert (strong):
+                                               💧 Elixier, 🃏 Typ, ⭐ Seltenheit, 🏟️ Arena */}
+
+
+                        </div>
+
+                        <div className="link-leiste">
+                            {/* ✏️ DEIN HTML 9: drei Links (a className="link-button" target="_blank"):
+                                               📊 RoyaleAPI, 📖 Wiki, ▶️ YouTube */}
+
+
+                        </div>
+
+                        <button className="deck-button" onClick={onDeck} disabled={deckVoll && !imDeck}>
+                            {deckText}
+                        </button>
+                    </div>
                 </div>
             );
         }
@@ -96,6 +144,7 @@
             const [karten, setKarten] = useState([]);
             const [filter, setFilter] = useState("Alle");
             const [deck, setDeck] = useState([]);
+            const [infoKarte, setInfoKarte] = useState(null);   // ⭐ Karte mit offener Info-Box
 
             useEffect(() => {
                 fetch(API_URL)
@@ -125,6 +174,10 @@
                 ? "0.0"
                 : (deck.reduce((summe, k) => summe + k.elixir, 0) / anzahlImDeck).toFixed(1);
             const leerePlaetze = DECK_GROESSE - anzahlImDeck;
+
+            // ⭐ Erweiterung (fertig): Links für das fertige Deck
+            const deckImSpiel = "https://link.clashroyale.com/deck/de?deck=" + deck.map((k) => k.id).join(";");
+            const deckStatistik = "https://royaleapi.com/decks/stats/" + deck.map((k) => k.key).join(",");
 
             return (
                 <div className="seite">
@@ -180,9 +233,20 @@
                                 karte={karte}
                                 imDeck={deck.some((k) => k.key === karte.key)}
                                 onKlick={() => karteUmschalten(karte)}
+                                onInfo={() => setInfoKarte(karte)}
                             />
                         ))}
                     </div>
+
+                    {infoKarte && (
+                        <KartenDetails
+                            karte={infoKarte}
+                            imDeck={deck.some((k) => k.key === infoKarte.key)}
+                            deckVoll={anzahlImDeck === DECK_GROESSE}
+                            onDeck={() => karteUmschalten(infoKarte)}
+                            onSchliessen={() => setInfoKarte(null)}
+                        />
+                    )}
 
                     <footer>
                         {/* ✏️ DEIN HTML 6: "Daten und Bilder: RoyaleAPI" und "Gebaut von DEIN NAME" */}

@@ -33,9 +33,9 @@
             return (
                 <div className="karte" onClick={onKlick}>
 
-                    {/* ✏️ DEIN HTML 2: Wappen (img) und Name (h2) */}
-
-
+                    {/* ✅ HTML 2: Wappen (img) und Name (h2) */}
+                    <img src={team.strBadge} alt={team.strTeam} />
+                    <h2>{team.strTeam}</h2>
                 </div>
             );
         }
@@ -51,13 +51,105 @@
             const beschreibung = text.slice(0, 300) + " ...";
             const webseite = "https://" + team.strWebsite;
 
+            // ⭐ ERWEITERUNG (fertig): mehr Infos und Links
+            const spitznamen = team.strTeamAlternate || "keine";
+            const wettbewerbe = [team.strLeague, team.strLeague2, team.strLeague3, team.strLeague4].filter(Boolean);
+            const farben = [team.strColour1, team.strColour2, team.strColour3].filter(Boolean);
+            const wikipedia = "https://de.wikipedia.org/wiki/Spezial:Suche?search=" + encodeURIComponent(team.strTeam);
+            const links = [
+                { name: "📸 Instagram", adresse: team.strInstagram },
+                { name: "👍 Facebook", adresse: team.strFacebook },
+                { name: "🐦 X / Twitter", adresse: team.strTwitter },
+                { name: "▶️ YouTube", adresse: team.strYoutube }
+            ]
+                .filter((link) => link.adresse)
+                .map((link) => ({ ...link, adresse: "https://" + link.adresse }));
+
+            // ⭐ ERWEITERUNG (fertig): das letzte Spiel vom Team laden
+            const [spiel, setSpiel] = useState(null);
+            useEffect(() => {
+                setSpiel(null);
+                fetch("https://www.thesportsdb.com/api/v1/json/123/eventslast.php?id=" + team.idTeam)
+                    .then((antwort) => antwort.json())
+                    .then((daten) => setSpiel(daten.results ? daten.results[0] : null));
+            }, [team.idTeam]);
+
             return (
                 <div className="details">
                     <button className="schliessen" onClick={onSchliessen}>✕</button>
 
-                    {/* ✏️ DEIN HTML 3: Name (h2), Gegründet, Stadion, Ort, Beschreibung, Link zur Webseite */}
+                    {/* ✅ HTML 3: Name (h2), Gegründet, Stadion, Ort, Beschreibung, Link zur Webseite */}
+                    <h2>{team.strTeam}</h2>
+                    <p><strong>Gegründet:</strong> {team.intFormedYear}</p>
+                    <p><strong>Stadion:</strong> {team.strStadium}</p>
+                    <p><strong>Ort:</strong> {team.strLocation}</p>
+                    <p>{beschreibung}</p>
+                    <a href={webseite} target="_blank">Zur Webseite</a>
+
+                    {/* ===================== ⭐ ERWEITERUNG ===================== */}
+                    <div className="mehr-infos">
+
+                        {team.strBanner && (
+                            <>
+                                {/* ✏️ DEIN HTML 5: Banner-Bild (img className="banner") mit src={team.strBanner} */}
+
+                            </>
+                        )}
+
+                        <div className="steckbrief">
+                            {/* ✏️ DEIN HTML 6: Überschrift (h3) "📋 Steckbrief", ein p mit den Spitznamen
+                                               und ein p "Wettbewerbe:" */}
 
 
+                            <ul className="wettbewerbe">
+                                {wettbewerbe.map((wettbewerb) => (
+                                    <li key={wettbewerb}>
+                                        {/* ✏️ DEIN HTML 6: der Name vom Wettbewerb */}
+                                    </li>
+                                ))}
+                            </ul>
+
+                            {/* ✏️ DEIN HTML 7: ein p "Vereinsfarben:" (die Farb-Punkte sind schon da) */}
+
+                            <div className="farben">
+                                {farben.map((farbe) => (
+                                    <span key={farbe} className="farbe" style={{ backgroundColor: farbe }}></span>
+                                ))}
+                            </div>
+                        </div>
+
+                        {team.strEquipment && (
+                            <div className="trikot-box">
+                                {/* ✏️ DEIN HTML 8: Überschrift (h3) "👕 Trikot" und das Bild (img className="trikot") */}
+
+                            </div>
+                        )}
+
+                        {spiel && (
+                            <div className="spiel">
+                                {/* ✏️ DEIN HTML 9a: Überschrift (h3) "⚽ Letztes Spiel" und ein p mit dem Datum */}
+
+
+                                <div className="spielstand">
+                                    {/* ✏️ DEIN HTML 9b: Heim-Wappen (img), Heim-Team (p),
+                                                        Ergebnis (span className="tore"), Gast-Team (p), Gast-Wappen (img) */}
+
+
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="link-leiste">
+                            {links.map((link) => (
+                                <a key={link.name} className="link-button" href={link.adresse} target="_blank">
+                                    {/* ✏️ DEIN HTML 10: der Name vom Link */}
+                                </a>
+                            ))}
+
+                            {/* ✏️ DEIN HTML 10: noch ein Link (a className="link-button") zu Wikipedia */}
+
+                        </div>
+                    </div>
                 </div>
             );
         }
@@ -87,9 +179,9 @@
                 <div className="seite">
 
                     <header>
-                        {/* ✏️ DEIN HTML 1: Überschrift (h1) und Untertitel (p className="untertitel") */}
-
-
+                        {/* ✅ HTML 1: Überschrift (h1) und Untertitel (p className="untertitel") */}
+                        <h1>⚽ Fußball-App</h1>
+                        <p className="untertitel">Die besten Teams aus Europa</p>
                     </header>
 
                     <nav className="liga-leiste">
@@ -119,9 +211,8 @@
                     )}
 
                     <footer>
-                        {/* ✏️ DEIN HTML 4: "Gemacht von DEIN NAME" */}
-
-
+                        {/* ✅ HTML 4: "Gemacht von DEIN NAME" */}
+                        <p>Gemacht von Leon, Denijel und Tom</p>
                     </footer>
 
                 </div>

@@ -115,6 +115,9 @@ Das **Layout ist oben schon fertig** (Raster, Position der Stapelgröße, scharf
 - [ ] Die Karte soll beim Drüberfahren (`:hover`) leuchten: `box-shadow: 0 0 15px yellow;`
 - [ ] Lass die Glühbirne 💡 (`.licht`) blinken. Tipp: `@keyframes` und `animation`.
 
+## Weiter geht's
+Fertig? Dann bau dir in **[Aufgabe 06 – Minecraft-Werkbank](../06-minecraft-werkbank/)** eine eigene Werkbank! 🛠️
+
 ---
 
 *Minecraft ist eine Marke von Mojang Studios. Die Daten und Bilder kommen von [PrismarineJS](https://github.com/PrismarineJS). Diese Aufgabe ist nur zum Lernen gedacht.*

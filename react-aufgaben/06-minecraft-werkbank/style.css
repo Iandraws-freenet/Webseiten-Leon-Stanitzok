@@ -1,0 +1,285 @@
+/* =====================================================
+   TEIL A – FERTIG: Layout (bitte nicht verändern)
+   ===================================================== */
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background-attachment: fixed;
+}
+
+.seite {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 30px 16px;
+    text-align: center;
+}
+
+/* Die Bilder sind winzig (16 x 16 Pixel). So bleiben sie beim Vergrößern scharf. */
+img {
+    image-rendering: pixelated;
+}
+
+/* ---------- Das graue Fenster ---------- */
+.fenster {
+    margin: 20px auto;
+    text-align: left;
+}
+
+.fenster h2 {
+    margin: 0 0 8px;
+}
+
+/* ---------- Alle Plätze sind Quadrate ---------- */
+.slot {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.slot img {
+    width: 75%;
+    height: auto;
+}
+
+.slot:not(.leer) {
+    cursor: pointer;
+}
+
+/* ---------- Drag & Drop ---------- */
+.slot[draggable="true"] {
+    cursor: grab;
+}
+
+.slot[draggable="true"]:active {
+    cursor: grabbing;
+}
+
+/* Hier kann man gerade etwas ablegen */
+.werkbank-platz.drueber,
+.hotbar.drueber {
+    outline: 3px dashed #ffff55;
+    outline-offset: 2px;
+}
+
+/* ---------- Crafting: 3x3-Feld, Pfeil, Ergebnis ---------- */
+.crafting {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 14px;
+}
+
+.werkbank {
+    display: grid;
+    grid-template-columns: repeat(3, 52px);
+    gap: 4px;
+}
+
+.pfeil {
+    font-size: 40px;
+}
+
+.ergebnis {
+    width: 72px;
+}
+
+/* Das Ergebnis wackelt, wenn man etwas bauen kann */
+.ergebnis.bereit {
+    animation: wackeln 0.8s ease-in-out infinite;
+}
+
+@keyframes wackeln {
+    0%, 100% { transform: rotate(0deg); }
+    25%      { transform: rotate(-4deg); }
+    75%      { transform: rotate(4deg); }
+}
+
+/* Anzahl unten rechts, wie im Spiel */
+.anzahl {
+    position: absolute;
+    bottom: 2px;
+    right: 5px;
+}
+
+.werkbank-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.werkbank-info p {
+    margin: 0;
+}
+
+.leeren-button {
+    min-height: 40px;
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+/* ---------- Inventar: 9 Spalten, Hotbar mit Abstand darunter ---------- */
+.inventar,
+.hotbar {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 4px;
+}
+
+.hotbar {
+    margin-top: 14px;
+}
+
+/* ---------- Meldung "Du hast ... gebaut" ---------- */
+.meldung {
+    animation: aufpoppen 0.5s ease-out;
+}
+
+@keyframes aufpoppen {
+    0%   { transform: scale(0.5); opacity: 0; }
+    70%  { transform: scale(1.08); opacity: 1; }
+    100% { transform: scale(1); }
+}
+
+/* ---------- Rezept-Ideen ---------- */
+.ideen {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 12px;
+}
+
+.idee {
+    position: relative;
+    padding: 10px 6px;
+}
+
+.idee img {
+    width: 40px;
+    height: 40px;
+}
+
+.idee p {
+    margin: 4px 0 0;
+    font-size: 12px;
+}
+
+.haken {
+    position: absolute;
+    top: 4px;
+    right: 6px;
+}
+
+footer {
+    margin-top: 40px;
+}
+
+/* ---------- Handy ---------- */
+@media (max-width: 600px) {
+    .werkbank {
+        grid-template-columns: repeat(3, 40px);
+    }
+
+    .crafting {
+        gap: 12px;
+    }
+
+    .pfeil {
+        font-size: 28px;
+    }
+
+    .ergebnis {
+        width: 56px;
+    }
+
+    .inventar,
+    .hotbar {
+        gap: 2px;
+    }
+}
+
+
+/* =====================================================
+   TEIL B – ✏️ DEIN CSS
+   ===================================================== */
+
+/* CSS 1 – Seite */
+body {
+
+}
+
+/* CSS 2 – Überschrift und Untertitel */
+h1 {
+
+}
+
+.untertitel {
+
+}
+
+/* CSS 3 – Das graue Fenster */
+.fenster {
+
+}
+
+.fenster h2 {
+
+}
+
+/* CSS 4 – Die Plätze (Slots) */
+.slot {
+
+}
+
+/* CSS 5 – Ausgewählter Platz (das hältst du in der Hand) */
+.slot.ausgewaehlt {
+
+}
+
+/* CSS 6 – Ergebnis-Platz und Pfeil */
+.ergebnis {
+
+}
+
+.ergebnis.bereit {
+
+}
+
+.pfeil {
+
+}
+
+/* CSS 7 – Anzahl beim Ergebnis */
+.anzahl {
+
+}
+
+/* CSS 8 – Button "Feld leeren" */
+.leeren-button {
+
+}
+
+/* CSS 9 – Meldung */
+.meldung {
+
+}
+
+/* CSS 10 – Rezept-Ideen */
+.idee {
+
+}
+
+.idee.geschafft {
+
+}
+
+/* CSS 11 – Fußzeile */
+footer {
+
+}

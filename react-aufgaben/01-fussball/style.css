@@ -83,6 +83,91 @@ body {
     cursor: pointer;
 }
 
+/* ---------- ⭐ Erweiterung: Mehr Infos ---------- */
+.mehr-infos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 25px;
+}
+
+.banner,
+.spiel,
+.link-leiste {
+    grid-column: 1 / -1;
+}
+
+.banner {
+    width: 100%;
+    height: auto;
+}
+
+.mehr-infos h3 {
+    margin: 0 0 8px;
+}
+
+.wettbewerbe {
+    margin: 0 0 10px;
+    padding-left: 20px;
+}
+
+.farben {
+    display: flex;
+    gap: 8px;
+}
+
+.farbe {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    box-shadow: 0 0 0 1px #999999;
+}
+
+.trikot-box {
+    text-align: center;
+}
+
+.trikot {
+    width: 110px;
+    height: auto;
+}
+
+.spiel {
+    text-align: center;
+}
+
+.spielstand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.spielstand img {
+    width: 44px;
+    height: 44px;
+    object-fit: contain;
+}
+
+.link-leiste {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.link-button {
+    display: inline-block;
+    padding: 8px 14px;
+    text-decoration: none;
+    transition: transform 0.15s;
+}
+
+.link-button:hover {
+    transform: translateY(-2px);
+}
+
 footer {
     margin-top: 40px;
 }
@@ -93,6 +178,10 @@ footer {
         grid-template-columns: repeat(2, 1fr);
         gap: 12px;
     }
+
+    .mehr-infos {
+        grid-template-columns: 1fr;
+    }
 }
 
 
@@ -102,55 +191,121 @@ footer {
 
 /* CSS 1 – Seite: Hintergrundfarbe, Schriftfarbe, Schriftart */
 body {
-
+    background-color: #1b7a3a;
+    background-image: linear-gradient(180deg, #1b7a3a, #0f4d24);
+    color: #ffffff;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 /* CSS 2 – Überschrift und Untertitel */
 h1 {
-
+    font-size: 42px;
+    margin: 0 0 8px;
+    color: #ffffff;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
 }
 
 .untertitel {
-
+    font-size: 18px;
+    margin: 0;
+    color: #d4f5dd;
 }
 
 /* CSS 3 – Liga-Buttons */
 .liga-button {
-
+    background-color: #ffffff;
+    color: #1b7a3a;
+    border: 2px solid #ffffff;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: bold;
 }
 
 .liga-button.aktiv {
-
+    background-color: #ffd700;
+    color: #0f4d24;
+    border-color: #ffd700;
 }
 
 /* CSS 4 – Karte */
 .karte {
-
+    background-color: #ffffff;
+    color: #222222;
+    padding: 20px 12px;
+    border-radius: 14px;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
 }
 
 /* CSS 5 – Wappen */
 .karte img {
-
+    width: 90px;
+    height: 90px;
 }
 
 .karte h2 {
-
+    font-size: 17px;
+    margin: 12px 0 0;
+    color: #1b7a3a;
 }
 
 /* CSS 6 – Detail-Box */
 .details {
-
+    background-color: #ffffff;
+    color: #222222;
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
 
 .details h2 {
-
+    margin-top: 0;
+    color: #1b7a3a;
 }
 
 .details a {
-
+    color: #1b7a3a;
+    font-weight: bold;
 }
 
 /* CSS 7 – Fußzeile */
 footer {
+    font-size: 13px;
+    color: #b8e6c4;
+}
+
+
+/* =====================================================
+   TEIL C – ⭐ ERWEITERUNG: DEIN CSS
+   ===================================================== */
+
+/* CSS 8 – Banner und Überschriften (h3) */
+.banner {
+
+}
+
+.mehr-infos h3 {
+
+}
+
+/* CSS 9 – Wettbewerbe-Liste */
+.wettbewerbe li {
+
+}
+
+/* CSS 10 – Letztes Spiel */
+.spiel {
+
+}
+
+.tore {
+
+}
+
+/* CSS 11 – Link-Buttons */
+.link-button {
+
+}
+
+.link-button:hover {
 
 }
