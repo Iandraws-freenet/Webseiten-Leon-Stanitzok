@@ -1,6 +1,6 @@
-# React-Aufgaben: Sport- und Spiele-Apps ⚽🏀🏊👑⛏️
+# React-Aufgaben: Sport- und Spiele-Apps ⚽🏀🏊👑⛏️🛠️
 
-In diesen 5 Aufgaben baust du kleine **Sport- und Spiele-Apps** mit **React**.
+In diesen 6 Aufgaben baust du kleine **Sport- und Spiele-Apps** mit **React**.
 Die Daten (Teams, Wappen, Sportler) kommen **live aus dem Internet**.
 
 **Das JavaScript ist komplett fertig.** Du schreibst nur:
@@ -33,7 +33,7 @@ Deine App  ◀──── Liste mit Teams, Wappen ...  ────  Sport-Serv
 
 Das Bestellen macht der Befehl `fetch`. Den haben wir schon für dich geschrieben.
 
-## Die 5 Aufgaben
+## Die 6 Aufgaben
 
 | Nr. | Aufgabe | Die fertige App kann … | Du gestaltest … |
 |-----|---------|------------------------|-----------------|
@@ -42,8 +42,10 @@ Das Bestellen macht der Befehl `fetch`. Den haben wir schon für dich geschriebe
 | 03 | [Schwimmen](03-schwimmen/) | Schwimm-Stars von Wikipedia laden, suchen, Verlauf | Kopf, Profil mit Foto, Lade- und Fehler-Box |
 | 04 | [Clash Royale](04-clash-royale/) | Alle Karten anzeigen, filtern, eigenes Deck aus 8 Karten bauen | Kopf, Karten mit Elixier-Tropfen, Seltenheits-Farben, Deck |
 | 05 | [Minecraft](05-minecraft/) | Über 500 Blöcke anzeigen, nach Werkzeug filtern, eigene Hotbar aus 9 Blöcken bauen | Kopf, Block-Karten, Härte-Farben, Hotbar |
+| 06 | [Minecraft-Werkbank](06-minecraft-werkbank/) | Items ins 3x3-Feld legen, über 2000 echte Rezepte erkennen, Items bauen | Werkbank-Fenster im 3D-Look, Slots, Ergebnis, Inventar, Rezept-Ideen |
 
 Jede Aufgabe hat 2 Teile: **Teil 1 – HTML** und **Teil 2 – CSS**.
+Fußball, Basketball und Clash Royale haben zusätzlich **Teil 3 – ⭐ Erweiterung**: Klick auf ein Team oder eine Karte → mehr Infos und Links ins Internet.
 Suche im Code nach **`DEIN HTML`** und **`DEIN CSS`**.
 
 ## So startest du
@@ -75,6 +77,6 @@ Suche im Code nach **`DEIN HTML`** und **`DEIN CSS`**.
 - Fußball und Basketball: [TheSportsDB](https://www.thesportsdb.com/) (kostenloser Test-Zugang)
 - Schwimmen: [Wikipedia](https://de.wikipedia.org/)
 - Clash Royale: [RoyaleAPI](https://royaleapi.com/) (Clash Royale ist eine Marke von Supercell)
-- Minecraft: [PrismarineJS](https://github.com/PrismarineJS) (Minecraft ist eine Marke von Mojang Studios)
+- Minecraft (Hotbar und Werkbank): [PrismarineJS](https://github.com/PrismarineJS) (Minecraft ist eine Marke von Mojang Studios)
 
 Viel Spaß! 🚀

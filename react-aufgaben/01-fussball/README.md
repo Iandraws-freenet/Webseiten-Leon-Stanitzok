@@ -75,6 +75,79 @@ Unten im Bereich **`DEIN CSS`** gestaltest du die App.
 - [ ] **CSS 6 – Detail-Box:** Hintergrund, Innenabstand, abgerundete Ecken, Farbe der Überschrift und des Links
 - [ ] **CSS 7 – Fußzeile:** kleine, helle Schrift
 
+---
+
+## Teil 3 – ⭐ Erweiterung: Mehr Infos und Links
+
+Fertig mit Teil 1 und 2? Dann wird die Detail-Box jetzt richtig groß!
+Unter deinem HTML 3 ist ein neuer Bereich `mehr-infos`. Das JavaScript dafür ist **schon fertig**:
+Es lädt sogar das **letzte Spiel** vom Team aus dem Internet.
+
+```
+ +---------------------------------------------+
+ |  Bayern Munich                       [✕]    |
+ |  Gegründet: 1900 ... (dein HTML 3)          |
+ |                                             |
+ |  [============ Banner-Bild ============]    |
+ |                                             |
+ |  📋 Steckbrief            👕 Trikot         |
+ |  Spitznamen: FC Bayern    [Trikot-Bild]     |
+ |  Wettbewerbe:                               |
+ |   • German Bundesliga                       |
+ |   • DFB-Pokal                               |
+ |  Vereinsfarben: 🔴 ⚪ 🔵                     |
+ |                                             |
+ |              ⚽ Letztes Spiel               |
+ |                 2026-10-31                  |
+ |   [Wappen] Bayern Munich  2 : 2  Dortmund [Wappen] |
+ |                                             |
+ |  [📸 Instagram] [👍 Facebook] [▶️ YouTube]   |
+ |  [📖 Wikipedia]                             |
+ +---------------------------------------------+
+```
+
+**Neue Werte, die du benutzen kannst:**
+
+| Das schreibst du | Das erscheint |
+|------------------|---------------|
+| `{team.strBanner}` | Adresse vom Banner-Bild |
+| `{team.strEquipment}` | Adresse vom Trikot-Bild |
+| `{spitznamen}` | Andere Namen vom Verein, z. B. *FC Bayern* |
+| `{wettbewerb}` | Ein Wettbewerb (in der Liste), z. B. *DFB-Pokal* |
+| `{link.name}` / `{link.adresse}` | Name und Adresse von einem Social-Media-Link |
+| `{wikipedia}` | Adresse der Wikipedia-Suche nach dem Team |
+| `{spiel.dateEvent}` | Datum vom letzten Spiel |
+| `{spiel.strHomeTeam}` / `{spiel.strAwayTeam}` | Heim-Team / Gast-Team |
+| `{spiel.intHomeScore}` / `{spiel.intAwayScore}` | Tore Heim / Tore Gast |
+| `{spiel.strHomeTeamBadge}` / `{spiel.strAwayTeamBadge}` | Wappen vom Heim-Team / Gast-Team |
+
+### To-do HTML
+- [ ] **HTML 5 – Banner:** `<img className="banner" ... />` mit dem Banner-Bild. Vergiss `alt` nicht!
+- [ ] **HTML 6 – Steckbrief:** `<h3>📋 Steckbrief</h3>`, `<p><strong>Spitznamen:</strong> ...</p>` und `<p><strong>Wettbewerbe:</strong></p>`.
+  In die Liste (`<li>`) kommt der Name vom Wettbewerb.
+- [ ] **HTML 7 – Vereinsfarben:** ein `<p>` mit „Vereinsfarben:“. Die bunten Punkte macht das JavaScript.
+- [ ] **HTML 8 – Trikot:** `<h3>👕 Trikot</h3>` und das Trikot-Bild mit `className="trikot"`.
+- [ ] **HTML 9 – Letztes Spiel:**
+  - oben (9a): `<h3>⚽ Letztes Spiel</h3>` und ein `<p>` mit dem Datum
+  - darunter (9b) in einer Reihe: Heim-Wappen, Heim-Team, das Ergebnis in `<span className="tore">2 : 2</span>`, Gast-Team, Gast-Wappen
+- [ ] **HTML 10 – Links:** In jeden Link-Button kommt `{link.name}`. Danach schreibst du selbst noch einen Link:
+  `<a className="link-button" href={wikipedia} target="_blank">📖 Wikipedia</a>`
+
+> 💡 `target="_blank"` heißt: Der Link öffnet sich in einem **neuen Tab**. So bleibt deine App offen.
+
+### To-do CSS (unten in `style.css`, Bereich **TEIL C**)
+- [ ] **CSS 8 – Banner und h3:** Banner mit runden Ecken (`border-radius`), Überschriften in einer Farbe deiner Wahl
+- [ ] **CSS 9 – Wettbewerbe:** Abstand zwischen den Listenpunkten. Tipp: `list-style: "🏆 ";` macht einen Pokal statt Punkt!
+- [ ] **CSS 10 – Letztes Spiel:** Hintergrund, Innenabstand, runde Ecken. Das Ergebnis (`.tore`) groß und fett, z. B. `font-size: 28px;`
+- [ ] **CSS 11 – Link-Buttons:** Hintergrundfarbe, Schriftfarbe, runde Ecken. Beim Drüberfahren (`:hover`) eine andere Farbe.
+
+### Extra-Ideen zur Erweiterung
+- [ ] Gib jedem Social-Media-Button seine eigene Farbe (Instagram pink, Facebook blau, YouTube rot). Tipp: `.link-button:nth-child(1) { ... }`
+- [ ] Zeige auch die Zuschauerzahl vom letzten Spiel: `{spiel.intSpectators}`
+- [ ] Zeige ein Fan-Bild: `{team.strFanart1}`
+
+---
+
 ## Tipps
 - In React heißt es **`className`** statt `class`.
 - Jedes Tag muss geschlossen werden, auch `<img ... />`.

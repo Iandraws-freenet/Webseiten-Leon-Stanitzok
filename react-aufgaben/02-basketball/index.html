@@ -20,6 +20,7 @@
         const { useState, useEffect } = React;
 
         const API_URL = "https://www.thesportsdb.com/api/v1/json/123/search_all_teams.php?l=NBA";
+        const SPURS_URL = "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=San_Antonio_Spurs";
 
         const SORTIERUNGEN = [
             { name: "A–Z", wert: "name" },
@@ -31,17 +32,109 @@
         // =====================================================
         // Eine Karte für EIN Team
         // =====================================================
-        function TeamKarte({ team, istFavorit, onFavorit }) {
+        function TeamKarte({ team, istFavorit, onFavorit, onKlick }) {
             return (
-                <div className={istFavorit ? "karte favorit" : "karte"}>
+                <div className={istFavorit ? "karte favorit" : "karte"} onClick={onKlick}>
 
                     {/* ✏️ DEIN HTML 3: Logo (img), Name (h2), Abkürzung (span className="kurz"),
                                        Gründungsjahr (p) und Halle (p) */}
 
 
-                    <button className="herz" onClick={onFavorit}>
+                    <button
+                        className="herz"
+                        onClick={(e) => {
+                            e.stopPropagation();   // Herz-Klick öffnet NICHT die Details
+                            onFavorit();
+                        }}
+                    >
                         {istFavorit ? "❤️" : "🤍"}
                     </button>
+                </div>
+            );
+        }
+
+
+        // =====================================================
+        // ⭐ ERWEITERUNG: Die Detail-Box, wenn man ein Team anklickt
+        // =====================================================
+        function Details({ team, onSchliessen }) {
+
+            // Fertig: Text, Webseite, Links
+            const text = team.strDescriptionDE || team.strDescriptionEN || "";
+            const beschreibung = text.slice(0, 350) + " ...";
+            const webseite = "https://" + team.strWebsite;
+            const wikipedia = "https://de.wikipedia.org/wiki/Spezial:Suche?search=" + encodeURIComponent(team.strTeam);
+            const farben = [team.strColour1, team.strColour2, team.strColour3].filter(Boolean);
+            const links = [
+                { name: "📸 Instagram", adresse: team.strInstagram },
+                { name: "👍 Facebook", adresse: team.strFacebook },
+                { name: "🐦 X / Twitter", adresse: team.strTwitter },
+                { name: "▶️ YouTube", adresse: team.strYoutube }
+            ]
+                .filter((link) => link.adresse)
+                .map((link) => ({ ...link, adresse: "https://" + link.adresse }));
+
+            // Fertig: das letzte Spiel vom Team laden
+            const [spiel, setSpiel] = useState(null);
+            useEffect(() => {
+                setSpiel(null);
+                fetch("https://www.thesportsdb.com/api/v1/json/123/eventslast.php?id=" + team.idTeam)
+                    .then((antwort) => antwort.json())
+                    .then((daten) => setSpiel(daten.results ? daten.results[0] : null));
+            }, [team.idTeam]);
+
+            return (
+                <div className="overlay" onClick={onSchliessen}>
+                    <div className="details" onClick={(e) => e.stopPropagation()}>
+                        <button className="schliessen" onClick={onSchliessen}>✕</button>
+
+                        {team.strBanner && (
+                            <>
+                                {/* ✏️ DEIN HTML 5: Banner-Bild (img className="banner") mit src={team.strBanner} */}
+
+                            </>
+                        )}
+
+                        {/* ✏️ DEIN HTML 6: Name (h2), Ort, Halle, Gegründet (je ein p mit strong)
+                                           und die Beschreibung (p className="beschreibung") */}
+
+
+                        {/* ✏️ DEIN HTML 7: ein p "Team-Farben:" (die Farb-Punkte sind schon da) */}
+
+                        <div className="farben">
+                            {farben.map((farbe) => (
+                                <span key={farbe} className="farbe" style={{ backgroundColor: farbe }}></span>
+                            ))}
+                        </div>
+
+                        {spiel && (
+                            <div className="spiel">
+                                {/* ✏️ DEIN HTML 8a: Überschrift (h3) "🏀 Letztes Spiel" und ein p mit dem Datum */}
+
+
+                                <div className="spielstand">
+                                    {/* ✏️ DEIN HTML 8b: Heim-Logo (img), Heim-Team (p),
+                                                        Ergebnis (span className="punkte"), Gast-Team (p), Gast-Logo (img) */}
+
+
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="link-leiste">
+                            {/* ✏️ DEIN HTML 9: Link zur Webseite (a className="link-button") mit {webseite} */}
+
+
+                            {links.map((link) => (
+                                <a key={link.name} className="link-button" href={link.adresse} target="_blank">
+                                    {/* ✏️ DEIN HTML 9: der Name vom Link */}
+                                </a>
+                            ))}
+
+                            {/* ✏️ DEIN HTML 9: Link zu Wikipedia (a className="link-button") mit {wikipedia} */}
+
+                        </div>
+                    </div>
                 </div>
             );
         }
@@ -56,10 +149,18 @@
             const [sortierung, setSortierung] = useState("name");
             const [favoriten, setFavoriten] = useState([]);
 
+            const [ausgewaehlt, setAusgewaehlt] = useState(null);   // ⭐ angeklicktes Team
+
             useEffect(() => {
-                fetch(API_URL)
-                    .then((antwort) => antwort.json())
-                    .then((daten) => setTeams(daten.teams || []));
+                // Der kostenlose Zugang liefert nur 10 Teams. Die Spurs laden wir extra dazu!
+                Promise.all([
+                    fetch(API_URL).then((antwort) => antwort.json()),
+                    fetch(SPURS_URL).then((antwort) => antwort.json())
+                ]).then(([daten, spurs]) => {
+                    const alle = [...(daten.teams || []), ...(spurs.teams || [])];
+                    const ohneDoppelte = alle.filter((team, i) => alle.findIndex((t) => t.idTeam === team.idTeam) === i);
+                    setTeams(ohneDoppelte.filter((team) => team.strSport === "Basketball"));
+                });
             }, []);
 
             function favoritUmschalten(id) {
@@ -119,9 +220,14 @@
                                 team={team}
                                 istFavorit={favoriten.includes(team.idTeam)}
                                 onFavorit={() => favoritUmschalten(team.idTeam)}
+                                onKlick={() => setAusgewaehlt(team)}
                             />
                         ))}
                     </div>
+
+                    {ausgewaehlt && (
+                        <Details team={ausgewaehlt} onSchliessen={() => setAusgewaehlt(null)} />
+                    )}
 
                     {teams.length > 0 && anzahlTeams === 0 && (
                         <div className="nichts-gefunden">

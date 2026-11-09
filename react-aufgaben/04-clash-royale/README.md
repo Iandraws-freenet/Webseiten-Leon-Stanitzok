@@ -89,6 +89,89 @@ Das **Layout ist oben schon fertig** (Raster, Position vom Elixier-Tropfen, Anim
 - [ ] **CSS 9 – Karte im Deck:** Karten, die schon im Deck sind, haben die Klasse `im-deck`. Mache sie halb durchsichtig: `opacity: 0.4;`
 - [ ] **CSS 10 – „Deck komplett“-Box und Fußzeile**
 
+---
+
+## Teil 3 – ⭐ Erweiterung: Karten-Infos und Links
+
+Jede Karte hat jetzt oben rechts einen **ℹ️-Knopf**. Klickt man darauf, öffnet sich eine **Info-Box** über der Seite
+mit der Beschreibung, allen Werten und **Links** zu RoyaleAPI, zum Wiki und zu YouTube.
+Aus der Info-Box kann man die Karte auch direkt ins Deck legen.
+Und wenn dein Deck **komplett** ist, bekommst du einen Link, mit dem du das Deck **direkt im Spiel** öffnen kannst!
+Das JavaScript ist **schon fertig**.
+
+```
+   +--------------------------------------+
+   |                                 [✕]  |
+   |             [ großes Bild ]          |
+   |               Hog Rider              |
+   |   Fast melee troop that targets ...  |
+   |                                      |
+   |   +-----------+    +-----------+     |
+   |   | 💧 Elixier |    | 🃏 Typ     |     |
+   |   |     4     |    |  Truppe   |     |
+   |   +-----------+    +-----------+     |
+   |   | ⭐ Seltenh.|    | 🏟️ Arena   |     |
+   |   |  Selten   |    |  Arena 5  |     |
+   |   +-----------+    +-----------+     |
+   |                                      |
+   |  [📊 RoyaleAPI] [📖 Wiki] [▶️ YouTube] |
+   |  [          ➕ Ins Deck            ]  |
+   +--------------------------------------+
+
+   Deck komplett:
+   🎉 Dein Deck ist komplett!
+   [📲 Deck im Spiel öffnen]  [📊 Deck-Statistik]
+```
+
+**Neue Werte, die du benutzen kannst:**
+
+| Das schreibst du | Das erscheint |
+|------------------|---------------|
+| `{bild}` | Adresse vom Kartenbild |
+| `{karte.name}` | Name der Karte |
+| `{beschreibung}` | Beschreibung der Karte (auf Englisch) |
+| `{karte.elixir}` | Elixier-Kosten |
+| `{typ}` | *Truppe*, *Gebäude* oder *Zauber* |
+| `{seltenheit}` | *Gewöhnlich*, *Selten*, ... |
+| `{arena}` | Ab wann man die Karte bekommt, z. B. *Arena 5* |
+| `{royaleApi}` | Link zur Karte auf RoyaleAPI |
+| `{wiki}` | Link zur Karte im Clash-Royale-Wiki |
+| `{youtube}` | Link zu YouTube-Videos über die Karte |
+| `{deckImSpiel}` | Link, der dein Deck **im Spiel** öffnet (in der „Deck komplett“-Box) |
+| `{deckStatistik}` | Link zur Statistik von deinem Deck auf RoyaleAPI |
+
+### To-do HTML
+- [ ] **HTML 7 – Info-Box oben:** großes Bild `<img className="gross" ... />`, den Namen in `<h2>` und die Beschreibung in `<p className="beschreibung">`.
+- [ ] **HTML 8 – Werte:** vier Kästchen. Jedes sieht so aus:
+  ```jsx
+  <div className="wert">
+      <span>💧 Elixier</span>
+      <strong>{karte.elixir}</strong>
+  </div>
+  ```
+  Mach dasselbe für 🃏 Typ, ⭐ Seltenheit und 🏟️ Arena.
+- [ ] **HTML 9 – Links:** drei Links, z. B. `<a className="link-button" href={royaleApi} target="_blank">📊 RoyaleAPI</a>`. Dann noch 📖 Wiki und ▶️ YouTube.
+- [ ] **HTML 10 – Deck-Links:** Baue ein komplettes Deck. In der „Deck komplett“-Box schreibst du unter deinen Text zwei Links:
+  „📲 Deck im Spiel öffnen“ mit `{deckImSpiel}` und „📊 Deck-Statistik“ mit `{deckStatistik}`.
+  Tipp: Pack beide in ein `<div className="link-leiste">`, dann stehen sie schön nebeneinander.
+
+> 💡 `target="_blank"` heißt: Der Link öffnet sich in einem **neuen Tab**. So bleibt deine App offen.
+> 📲 Öffnest du den Deck-Link auf einem Handy mit Clash Royale, wird das Deck **direkt ins Spiel kopiert**!
+
+### To-do CSS (unten in `style.css`, Bereich **TEIL C**)
+- [ ] **CSS 11 – Info-Box:** dunkler Hintergrund, Innenabstand, runde Ecken, dicker Rahmen (`border: 5px solid gray`). Name in Gold, Beschreibung kursiv (`font-style: italic`).
+  Tipp: Die Box hat auch die Seltenheits-Klasse. Deine Rahmenfarben aus CSS 7 funktionieren hier also automatisch!
+- [ ] **CSS 12 – Werte-Kästchen:** Hintergrund (z. B. `rgba(255, 255, 255, 0.1)`), runde Ecken. Titel (`span`) klein, Wert (`strong`) groß.
+- [ ] **CSS 13 – Link-Buttons:** Farben, Innenabstand ist schon da, runde Ecken. Beim Drüberfahren in Gold.
+- [ ] **CSS 14 – „Ins Deck“-Button:** groß und auffällig, z. B. Grün `#4caf50` mit weißer fetter Schrift
+
+### Extra-Ideen zur Erweiterung
+- [ ] Mach den ℹ️-Knopf erst sichtbar, wenn man mit der Maus über die Karte fährt. Tipp: `.info-button { opacity: 0; }` und `.karte:hover .info-button { opacity: 1; }`
+- [ ] Gib `.details.legendary` einen Regenbogen-Rahmen mit `border-image: linear-gradient(...) 1;`
+- [ ] Färbe das Elixier-Kästchen in Pink wie den Elixier-Tropfen. Tipp: `.wert:first-child { ... }`
+
+---
+
 ## Tipps
 - In React heißt es **`className`** statt `class`.
 - Jedes Tag muss geschlossen werden, auch `<img ... />`.

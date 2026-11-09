@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft-Werkbank</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- React und Babel aus dem Internet laden (nicht verändern) -->
+    <script src="https://unpkg.com/react@18.3.1/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone@7.26.4/babel.min.js"></script>
+</head>
+<body>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+
+        const { useState, useEffect } = React;
+
+        const ITEMS_URL = "https://raw.githubusercontent.com/PrismarineJS/minecraft-data/master/data/pc/1.20/items.json";
+        const REZEPTE_URL = "https://raw.githubusercontent.com/PrismarineJS/minecraft-data/master/data/pc/1.20/recipes.json";
+        const TEXTUR_URL = "https://raw.githubusercontent.com/PrismarineJS/minecraft-assets/master/data/1.20.2/items_textures.json";
+        const BILD_URL = "https://raw.githubusercontent.com/PrismarineJS/minecraft-assets/master/data/1.20.2/";
+
+        const INVENTAR_GROESSE = 27;   // 3 Reihen mit je 9 Plätzen
+        const HOTBAR_GROESSE = 9;      // 1 Reihe ganz unten
+
+        // Damit fängst du an (unendlich viele davon)
+        const START_ITEMS = [
+            "oak_log", "oak_planks", "stick", "cobblestone", "stone", "coal",
+            "iron_ingot", "gold_ingot", "diamond", "redstone", "string", "feather",
+            "flint", "leather", "sugar_cane", "wheat", "apple", "white_wool",
+            "sand", "glass"
+        ];
+
+        // Diese Rezepte kannst du ausprobieren
+        const REZEPT_IDEEN = [
+            "crafting_table", "torch", "chest", "furnace",
+            "wooden_pickaxe", "stone_pickaxe", "iron_pickaxe", "diamond_sword",
+            "bow", "arrow", "ladder", "bucket",
+            "shears", "compass", "clock", "bread",
+            "golden_apple", "white_bed", "paper", "book"
+        ];
+
+        // Für ein paar Items gibt es schönere Bilder
+        const BESSERE_BILDER = {
+            crafting_table: "blocks/crafting_table_front",
+            oak_log: "blocks/oak_log",
+            sandstone: "blocks/sandstone"
+        };
+
+        // Aus "minecraft:block/stone" wird die Bild-Adresse ".../blocks/stone.png"
+        function bildAdresse(name, textur) {
+            let pfad = BESSERE_BILDER[name] || textur || "";
+            pfad = pfad.replace("minecraft:", "");
+            if (pfad.startsWith("block/")) pfad = "blocks/" + pfad.slice(6);
+            if (pfad.startsWith("item/")) pfad = "items/" + pfad.slice(5);
+            return BILD_URL + pfad + ".png";
+        }
+
+
+        // =====================================================
+        // Rezepte erkennen (fertig, nicht verändern)
+        // =====================================================
+
+        // Schneidet leere Reihen und Spalten am Rand weg
+        function zuschneiden(form) {
+            const breite = Math.max(...form.map((reihe) => reihe.length));
+            const voll = form.map((reihe) =>
+                Array.from({ length: breite }, (_, i) => (reihe[i] === undefined ? null : reihe[i]))
+            );
+            const reihen = voll.filter((reihe) => reihe.some((x) => x !== null));
+            if (reihen.length === 0) return [];
+            const spalten = [];
+            for (let s = 0; s < breite; s++) {
+                if (reihen.some((reihe) => reihe[s] !== null)) spalten.push(s);
+            }
+            return reihen.map((reihe) => spalten.map((s) => reihe[s]));
+        }
+
+        function gleicheForm(a, b) {
+            return a.length === b.length &&
+                a.every((reihe, i) => reihe.length === b[i].length && reihe.every((x, j) => x === b[i][j]));
+        }
+
+        function spiegeln(form) {
+            return form.map((reihe) => [...reihe].reverse());
+        }
+
+        // feld: 9 Plätze (Item-Nummer oder null). Gibt { id, count } zurück oder null.
+        function findeRezept(feld, rezepte) {
+            const raster = [feld.slice(0, 3), feld.slice(3, 6), feld.slice(6, 9)];
+            const form = zuschneiden(raster);
+            if (form.length === 0) return null;
+            const zutaten = feld.filter((x) => x !== null).sort((a, b) => a - b);
+
+            for (const rezept of rezepte) {
+                if (rezept.inShape) {
+                    const rezeptForm = zuschneiden(rezept.inShape);
+                    if (gleicheForm(form, rezeptForm) || gleicheForm(form, spiegeln(rezeptForm))) {
+                        return rezept.result;
+                    }
+                } else if (rezept.ingredients) {
+                    const noetig = [...rezept.ingredients].sort((a, b) => a - b);
+                    if (noetig.length === zutaten.length && noetig.every((x, i) => x === zutaten[i])) {
+                        return rezept.result;
+                    }
+                }
+            }
+            return null;
+        }
+
+
+        // =====================================================
+        // Ein Platz im Inventar oder in der Hotbar
+        // =====================================================
+        function ItemSlot({ item, ausgewaehlt, onKlick }) {
+            if (!item) {
+                return <div className="slot leer"></div>;
+            }
+
+            const bild = item.bild;
+            const klassen = ausgewaehlt ? "slot ausgewaehlt" : "slot";
+
+            return (
+                <div className={klassen} onClick={onKlick}>
+
+                    {/* ✏️ DEIN HTML 3: das Bild (img) mit alt UND title = {item.displayName}
+                                       (title zeigt den Namen, wenn man mit der Maus drüberfährt) */}
+
+
+                </div>
+            );
+        }
+
+
+        // =====================================================
+        // Ein Platz im 3x3-Werkbank-Feld
+        // =====================================================
+        function WerkbankPlatz({ item, onKlick }) {
+            return (
+                <div className="slot werkbank-platz" onClick={onKlick}>
+                    {item && (
+                        <>
+                            {/* ✏️ DEIN HTML 4: das Bild (img) mit src={item.bild} und alt={item.displayName} */}
+
+
+                        </>
+                    )}
+                </div>
+            );
+        }
+
+
+        // =====================================================
+        // Eine Rezept-Idee (unten in der Liste)
+        // =====================================================
+        function RezeptIdee({ item, geschafft }) {
+            const bild = item.bild;
+            const klassen = geschafft ? "idee geschafft" : "idee";
+
+            return (
+                <div className={klassen}>
+
+                    {/* ✏️ DEIN HTML 7: Bild (img), Name (p) und ein Haken
+                                       {geschafft && <span className="haken">✅</span>} */}
+
+
+                </div>
+            );
+        }
+
+
+        // =====================================================
+        // Die App (JavaScript ist fertig)
+        // =====================================================
+        function App() {
+            const [items, setItems] = useState({});          // Item-Nummer -> Item
+            const [rezepte, setRezepte] = useState([]);
+            const [inventar, setInventar] = useState([]);    // Start-Items
+            const [hotbar, setHotbar] = useState([]);        // gebaute Items
+            const [feld, setFeld] = useState(Array(9).fill(null));
+            const [hand, setHand] = useState(null);          // Item, das du gerade hältst
+            const [geschafft, setGeschafft] = useState([]);  // Namen aller gebauten Items
+            const [letztesItem, setLetztesItem] = useState(null);
+
+            useEffect(() => {
+                Promise.all([
+                    fetch(ITEMS_URL).then((antwort) => antwort.json()),
+                    fetch(REZEPTE_URL).then((antwort) => antwort.json()),
+                    fetch(TEXTUR_URL).then((antwort) => antwort.json())
+                ]).then(([itemDaten, rezeptDaten, texturen]) => {
+                    const texturVon = {};
+                    texturen.forEach((t) => { texturVon[t.name] = t.texture; });
+
+                    const nachNummer = {};
+                    itemDaten.forEach((item) => {
+                        nachNummer[item.id] = { ...item, bild: bildAdresse(item.name, texturVon[item.name]) };
+                    });
+
+                    setItems(nachNummer);
+                    setRezepte(Object.values(rezeptDaten).flat());
+                    setInventar(START_ITEMS
+                        .map((name) => Object.values(nachNummer).find((item) => item.name === name))
+                        .filter(Boolean));
+                });
+            }, []);
+
+            const itemNachName = (name) => Object.values(items).find((item) => item.name === name);
+
+            // Was kommt raus?
+            const ergebnis = findeRezept(feld, rezepte);
+            const ergebnisItem = ergebnis ? items[ergebnis.id] : null;
+
+            function itemNehmen(item) {
+                setHand(hand && hand.id === item.id ? null : item);
+            }
+
+            function platzKlicken(index) {
+                const neuesFeld = [...feld];
+                if (hand) {
+                    neuesFeld[index] = hand.id;        // Item hinlegen
+                } else {
+                    neuesFeld[index] = null;           // Item wegnehmen
+                }
+                setFeld(neuesFeld);
+            }
+
+            function bauen() {
+                if (!ergebnisItem) return;
+                // Neues Item kommt vorne in die Hotbar, höchstens 9
+                const ohneDoppelte = hotbar.filter((item) => item.id !== ergebnisItem.id);
+                setHotbar([ergebnisItem, ...ohneDoppelte].slice(0, HOTBAR_GROESSE));
+                if (!geschafft.includes(ergebnisItem.name)) {
+                    setGeschafft([...geschafft, ergebnisItem.name]);
+                }
+                setLetztesItem(ergebnisItem);
+                setFeld(Array(9).fill(null));
+            }
+
+            function feldLeeren() {
+                setFeld(Array(9).fill(null));
+                setHand(null);
+            }
+
+            const handName = hand ? hand.displayName : "nichts";
+            const anzahlGeschafft = geschafft.length;
+            const anzahlIdeen = REZEPT_IDEEN.length;
+            const ideen = REZEPT_IDEEN.map(itemNachName).filter(Boolean);
+            const inventarPlaetze = Array.from({ length: INVENTAR_GROESSE }, (_, i) => inventar[i] || null);
+            const hotbarPlaetze = Array.from({ length: HOTBAR_GROESSE }, (_, i) => hotbar[i] || null);
+            const laedt = rezepte.length === 0;
+
+            return (
+                <div className="seite">
+
+                    <header>
+                        {/* ✏️ DEIN HTML 1: Überschrift (h1) und Untertitel (p className="untertitel") */}
+
+
+                    </header>
+
+                    {laedt && <p className="laden">Die Werkbank wird aufgebaut ... 🛠️</p>}
+
+                    <section className="fenster">
+
+                        {/* ✏️ DEIN HTML 2a: Überschrift (h2) "Crafting" */}
+
+
+                        <div className="crafting">
+                            <div className="werkbank">
+                                {feld.map((id, i) => (
+                                    <WerkbankPlatz key={i} item={id !== null ? items[id] : null} onKlick={() => platzKlicken(i)} />
+                                ))}
+                            </div>
+
+                            <div className="pfeil">
+                                {/* ✏️ DEIN HTML 5: ein Pfeil ➜ */}
+
+                            </div>
+
+                            <div className={ergebnisItem ? "slot ergebnis bereit" : "slot ergebnis"} onClick={bauen}>
+                                {ergebnisItem && (
+                                    <>
+                                        {/* ✏️ DEIN HTML 6: Bild vom Ergebnis (img mit src={ergebnisItem.bild})
+                                                           und die Anzahl: <span className="anzahl">{ergebnis.count}</span> */}
+
+
+                                    </>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="werkbank-info">
+                            {/* ✏️ DEIN HTML 8: ✋ In der Hand: {handName}   und   🛠️ {anzahlGeschafft} / {anzahlIdeen} Rezepte */}
+
+
+                            <button className="leeren-button" onClick={feldLeeren}>Feld leeren</button>
+                        </div>
+
+                        {/* ✏️ DEIN HTML 2b: Überschrift (h2) "Inventar" */}
+
+
+                        <div className="inventar">
+                            {inventarPlaetze.map((item, i) => (
+                                <ItemSlot key={i} item={item} ausgewaehlt={hand && item && hand.id === item.id} onKlick={() => itemNehmen(item)} />
+                            ))}
+                        </div>
+
+                        <div className="hotbar">
+                            {hotbarPlaetze.map((item, i) => (
+                                <ItemSlot key={i} item={item} ausgewaehlt={hand && item && hand.id === item.id} onKlick={() => itemNehmen(item)} />
+                            ))}
+                        </div>
+                    </section>
+
+                    {letztesItem && (
+                        <div className="meldung" key={letztesItem.name + anzahlGeschafft}>
+                            {/* ✏️ DEIN HTML 9: "🎉 Du hast {letztesItem.displayName} gebaut!" */}
+
+                        </div>
+                    )}
+
+                    <section className="ideen-box">
+                        {/* ✏️ DEIN HTML 10: Überschrift (h2) "📖 Rezept-Ideen" */}
+
+
+                        <div className="ideen">
+                            {ideen.map((item) => (
+                                <RezeptIdee key={item.name} item={item} geschafft={geschafft.includes(item.name)} />
+                            ))}
+                        </div>
+                    </section>
+
+                    <footer>
+                        {/* ✏️ DEIN HTML 11: "Daten und Bilder: PrismarineJS" und "Gebaut von DEIN NAME" */}
+
+
+                    </footer>
+
+                </div>
+            );
+        }
+
+        ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+
+    </script>
+</body>
+</html>
