@@ -82,7 +82,12 @@
                                        Name (h3), Werkzeug (p) und Härte (p className="haerte") */}
 
 
-                    {leuchtet && <span className="licht">💡</span>}
+                    {leuchtet &&
+                         <span className="licht">💡</span>}
+                         <img src={bild} alt={block.displayName} />
+                         <h3>{block.displayName}</h3>
+                         <p>{werkzeug}</p>
+                         <p className="haerte">{stufe}</p>
                 </div>
             );
         }
@@ -98,7 +103,7 @@
                 <div className="hotbar-platz" onClick={onKlick}>
 
                     {/* ✏️ DEIN HTML 3: nur das Bild (img) */}
-
+<img src={bild} alt={block.displayName} />
 
                 </div>
             );
@@ -154,7 +159,7 @@
 
                     <header>
                         {/* ✏️ DEIN HTML 1: Überschrift (h1) und Untertitel (p className="untertitel") */}
-
+<h1>Welche Tools für Welche Blöcke</h1>
 
                     </header>
 
@@ -170,15 +175,15 @@
 
                         <div className="hotbar-info">
                             {/* ✏️ DEIN HTML 4: {anzahlInHotbar} / 9 Blöcke  und  💡 {anzahlLeuchtend} leuchten */}
-
-
+ <p>{anzahlInHotbar} / 9 Blöcke</p>
+                            <p>💡 {anzahlLeuchtend} leuchten</p>
                         </div>
                     </section>
 
                     {anzahlInHotbar === HOTBAR_GROESSE && (
                         <div className="hotbar-voll">
                             {/* ✏️ DEIN HTML 5: "🎉 Deine Hotbar ist voll! Los geht's!" */}
-
+🎉 Deine Hotbar ist voll! Los geht's!
                         </div>
                     )}
 
@@ -209,7 +214,8 @@
 
                     <footer>
                         {/* ✏️ DEIN HTML 6: "Daten und Bilder: PrismarineJS" und "Gebaut von DEIN NAME" */}
-
+Daten und Bilder: PrismarineJS
+Gebaut von Leon
 
                     </footer>
 
