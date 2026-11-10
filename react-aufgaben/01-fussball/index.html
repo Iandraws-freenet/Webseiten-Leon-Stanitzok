@@ -7,9 +7,12 @@
     <link rel="stylesheet" href="style.css">
 
     <!-- React und Babel aus dem Internet laden (nicht verändern) -->
-    <script src="https://unpkg.com/react@18.3.1/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone@7.26.4/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.26.4/babel.min.js"></script>
+
+    <!-- Gespeicherte Sport-Daten (erzeugt mit: node daten-aktualisieren.js) -->
+    <script src="daten.js"></script>
 </head>
 <body>
 
@@ -18,6 +21,27 @@
     <script type="text/babel">
 
         const { useState, useEffect } = React;
+
+        // Daten holen: zuerst aus daten.js (gespeichert), sonst aus dem Zwischenspeicher, sonst aus dem Internet.
+        // So bleiben wir unter dem Limit der kostenlosen API (30 Anfragen pro Minute), auch mit der ganzen Klasse.
+        function holeDaten(adresse) {
+            if (window.GESPEICHERTE_DATEN && window.GESPEICHERTE_DATEN[adresse]) {
+                return Promise.resolve(window.GESPEICHERTE_DATEN[adresse]);
+            }
+            try {
+                const gespeichert = sessionStorage.getItem(adresse);
+                if (gespeichert) return Promise.resolve(JSON.parse(gespeichert));
+            } catch (e) { /* ohne Zwischenspeicher weiterarbeiten */ }
+            return fetch(adresse)
+                .then((antwort) => {
+                    if (!antwort.ok) throw new Error("HTTP " + antwort.status);
+                    return antwort.json();
+                })
+                .then((daten) => {
+                    try { sessionStorage.setItem(adresse, JSON.stringify(daten)); } catch (e) { }
+                    return daten;
+                });
+        }
 
         const LIGEN = [
             { name: "Bundesliga", code: "German_Bundesliga" },
@@ -75,8 +99,7 @@
             useEffect(() => {
                 setLaedt(true);
                 setAusgewaehlt(null);
-                fetch("https://www.thesportsdb.com/api/v1/json/123/search_all_teams.php?l=" + liga)
-                    .then((antwort) => antwort.json())
+                holeDaten("https://www.thesportsdb.com/api/v1/json/123/search_all_teams.php?l=" + liga)
                     .then((daten) => {
                         setTeams(daten.teams || []);
                         setLaedt(false);
