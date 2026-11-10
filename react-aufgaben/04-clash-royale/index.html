@@ -7,9 +7,9 @@
     <link rel="stylesheet" href="style.css">
 
     <!-- React und Babel aus dem Internet laden (nicht verändern) -->
-    <script src="https://unpkg.com/react@18.3.1/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone@7.26.4/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.26.4/babel.min.js"></script>
 </head>
 <body>
 
@@ -19,8 +19,8 @@
 
         const { useState, useEffect } = React;
 
-        const API_URL = "https://royaleapi.github.io/cr-api-data/json/cards.json";
-        const BILD_URL = "https://royaleapi.github.io/cr-api-assets/cards-150/";
+        const API_URL = "https://cdn.jsdelivr.net/gh/RoyaleAPI/cr-api-data@master/docs/json/cards.json";
+        const BILD_URL = "https://cdn.jsdelivr.net/gh/RoyaleAPI/cr-api-assets@master/cards-150/";
         const DECK_GROESSE = 8;
 
         const FILTER = [

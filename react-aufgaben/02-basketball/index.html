@@ -7,9 +7,12 @@
     <link rel="stylesheet" href="style.css">
 
     <!-- React und Babel aus dem Internet laden (nicht verändern) -->
-    <script src="https://unpkg.com/react@18.3.1/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone@7.26.4/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.26.4/babel.min.js"></script>
+
+    <!-- Gespeicherte Sport-Daten (erzeugt mit: node daten-aktualisieren.js) -->
+    <script src="daten.js"></script>
 </head>
 <body>
 
@@ -18,6 +21,27 @@
     <script type="text/babel">
 
         const { useState, useEffect } = React;
+
+        // Daten holen: zuerst aus daten.js (gespeichert), sonst aus dem Zwischenspeicher, sonst aus dem Internet.
+        // So bleiben wir unter dem Limit der kostenlosen API (30 Anfragen pro Minute), auch mit der ganzen Klasse.
+        function holeDaten(adresse) {
+            if (window.GESPEICHERTE_DATEN && window.GESPEICHERTE_DATEN[adresse]) {
+                return Promise.resolve(window.GESPEICHERTE_DATEN[adresse]);
+            }
+            try {
+                const gespeichert = sessionStorage.getItem(adresse);
+                if (gespeichert) return Promise.resolve(JSON.parse(gespeichert));
+            } catch (e) { /* ohne Zwischenspeicher weiterarbeiten */ }
+            return fetch(adresse)
+                .then((antwort) => {
+                    if (!antwort.ok) throw new Error("HTTP " + antwort.status);
+                    return antwort.json();
+                })
+                .then((daten) => {
+                    try { sessionStorage.setItem(adresse, JSON.stringify(daten)); } catch (e) { }
+                    return daten;
+                });
+        }
 
         const API_URL = "https://www.thesportsdb.com/api/v1/json/123/search_all_teams.php?l=NBA";
         const SPURS_URL = "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=San_Antonio_Spurs";
@@ -155,10 +179,11 @@
             const [ausgewaehlt, setAusgewaehlt] = useState(null);   // ⭐ angeklicktes Team
 
             useEffect(() => {
-                // Der kostenlose Zugang liefert nur 10 Teams. Die Spurs laden wir extra dazu!
+                // Der kostenlose Zugang liefert nur 10 Teams. Die Spurs laden wir extra dazu.
+                // Gleichzeitig nutzen wir den Cache, damit wir die API-Limits nicht überschreiten.
                 Promise.all([
-                    fetch(API_URL).then((antwort) => antwort.json()),
-                    fetch(SPURS_URL).then((antwort) => antwort.json())
+                    holeDaten(API_URL),
+                    holeDaten(SPURS_URL)
                 ]).then(([daten, spurs]) => {
                     const alle = [...(daten.teams || []), ...(spurs.teams || [])];
                     const ohneDoppelte = alle.filter((team, i) => alle.findIndex((t) => t.idTeam === team.idTeam) === i);
