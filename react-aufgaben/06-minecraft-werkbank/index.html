@@ -29,10 +29,10 @@
 
         // Damit fängst du an (unendlich viele davon)
         const START_ITEMS = [
-            "oak_log", "oak_planks", "stick", "cobblestone", "stone", "coal",
+            "oak_log","cobblestone", "stone", "coal",
             "iron_ingot", "gold_ingot", "diamond", "redstone", "string", "feather",
             "flint", "leather", "sugar_cane", "wheat", "apple", "white_wool",
-            "sand", "glass"
+            "sand", "glass","copper_ingot","ender_pearl","blaze_rod","obsidian","crying_obsidian","glowstone_dust"
         ];
 
         // Diese Rezepte kannst du ausprobieren
@@ -146,7 +146,7 @@
                     {/* ✏️ DEIN HTML 3: das Bild (img) mit alt UND title = {item.displayName}
                                        (title zeigt den Namen, wenn man mit der Maus drüberfährt) */}
 
-
+                    <img src={item.bild}title={item.displayName} alt></img>
                 </div>
             );
         }
@@ -193,7 +193,7 @@
                     {item && (
                         <>
                             {/* ✏️ DEIN HTML 4: das Bild (img) mit src={item.bild} und alt={item.displayName} */}
-
+                        <img alt={item.displayName} src={item.bild}></img>
 
                         </>
                     )}
@@ -214,6 +214,9 @@
 
                     {/* ✏️ DEIN HTML 7: Bild (img), Name (p) und ein Haken
                                        {geschafft && <span className="haken">✅</span>} */}
+                    <img src={bild}></img>
+                    <p>{item.displayName}</p>
+                    {geschafft && <span className="haken">✅</span>}
 
 
                 </div>
@@ -331,7 +334,8 @@
 
                     <header>
                         {/* ✏️ DEIN HTML 1: Überschrift (h1) und Untertitel (p className="untertitel") */}
-
+                    <h1>Das Craftingquiz</h1>
+                    <p className="untertitel">Test your Minecraft knowlege</p>
 
                     </header>
 
@@ -340,7 +344,7 @@
                     <section className="fenster">
 
                         {/* ✏️ DEIN HTML 2a: Überschrift (h2) "Crafting" */}
-
+                        <h2>Crafting</h2>
 
                         <div className="crafting">
                             <div className="werkbank">
@@ -357,7 +361,7 @@
 
                             <div className="pfeil">
                                 {/* ✏️ DEIN HTML 5: ein Pfeil ➜ */}
-
+                                ➜
                             </div>
 
                             <div
@@ -374,7 +378,8 @@
                                     <>
                                         {/* ✏️ DEIN HTML 6: Bild vom Ergebnis (img mit src={ergebnisItem.bild})
                                                            und die Anzahl: <span className="anzahl">{ergebnis.count}</span> */}
-
+                                            <img src={ergebnisItem.bild}></img>
+                                            <span className="anzahl">{ergebnis.count}</span>
 
                                     </>
                                 )}
@@ -383,13 +388,14 @@
 
                         <div className="werkbank-info">
                             {/* ✏️ DEIN HTML 8: ✋ In der Hand: {handName}   und   🛠️ {anzahlGeschafft} / {anzahlIdeen} Rezepte */}
-
+                            <p>✋ In der Hand: {handName}</p>
+                            <p>🛠️ {anzahlGeschafft} / {anzahlIdeen} Rezepte</p>
 
                             <button className="leeren-button" onClick={feldLeeren}>Feld leeren</button>
                         </div>
 
                         {/* ✏️ DEIN HTML 2b: Überschrift (h2) "Inventar" */}
-
+                        <h2>Inventar</h2>
 
                         <div className="inventar">
                             {inventarPlaetze.map((item, i) => (
@@ -425,13 +431,13 @@
                     {letztesItem && (
                         <div className="meldung" key={letztesItem.name + anzahlGeschafft}>
                             {/* ✏️ DEIN HTML 9: "🎉 Du hast {letztesItem.displayName} gebaut!" */}
-
+                            🎉 Du hast {letztesItem.displayName} gebaut!
                         </div>
                     )}
 
                     <section className="ideen-box">
                         {/* ✏️ DEIN HTML 10: Überschrift (h2) "📖 Rezept-Ideen" */}
-
+                        <h2>Rezept-Ideen</h2>
 
                         <div className="ideen">
                             {ideen.map((item) => (
@@ -442,7 +448,7 @@
 
                     <footer>
                         {/* ✏️ DEIN HTML 11: "Daten und Bilder: PrismarineJS" und "Gebaut von DEIN NAME" */}
-
+                        Daten und Bilder: PrismarineJS" und "Gebaut von Leon
 
                     </footer>
 

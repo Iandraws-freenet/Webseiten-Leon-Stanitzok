@@ -61,6 +61,7 @@ img {
 /* Hier kann man gerade etwas ablegen */
 .werkbank-platz.drueber,
 .hotbar.drueber {
+    background-color: #131311;
     outline: 3px dashed #ffff55;
     outline-offset: 2px;
 }
@@ -75,7 +76,9 @@ img {
 }
 
 .werkbank {
+    background-color: rgb(104, 102, 102);
     display: grid;
+    border : solid 5px black;
     grid-template-columns: repeat(3, 52px);
     gap: 4px;
 }
@@ -85,6 +88,8 @@ img {
 }
 
 .ergebnis {
+    background-color: #f3f0f0;
+    border : solid 5px black;
     width: 72px;
 }
 
@@ -210,12 +215,12 @@ footer {
    ===================================================== */
 
 /* CSS 1 – Seite */
-body {
+body {background-color: #8c948e;
 
 }
 
 /* CSS 2 – Überschrift und Untertitel */
-h1 {
+h1 {text-shadow: 3px 3px 0 #3f3f3f;
 
 }
 
@@ -224,21 +229,23 @@ h1 {
 }
 
 /* CSS 3 – Das graue Fenster */
-.fenster {
-
+.fenster {background-color:#c6c6c6 ;
+border: 3px solid;
+border-color: #373737 #ffffff #ffffff #373737;
 }
 
-.fenster h2 {
+.fenster h2 {background-color:#3f3f3f ;
 
 }
 
 /* CSS 4 – Die Plätze (Slots) */
-.slot {
-
+.slot {background-color:#8b8b8b ;
+border: 3px solid;
+border-color: #373737 #ffffff #ffffff #373737;
 }
 
 /* CSS 5 – Ausgewählter Platz (das hältst du in der Hand) */
-.slot.ausgewaehlt {
+.slot.ausgewaehlt {outline: 3px solid white;
 
 }
 
@@ -247,16 +254,16 @@ h1 {
 
 }
 
-.ergebnis.bereit {
+.ergebnis.bereit {box-shadow: 0 0 12px yellow;
 
 }
 
-.pfeil {
+.pfeil {color:#8b8b8b ;
 
 }
 
 /* CSS 7 – Anzahl beim Ergebnis */
-.anzahl {
+.anzahl {text-shadow: 2px 2px 0 #3f3f3f;
 
 }
 
@@ -266,17 +273,22 @@ h1 {
 }
 
 /* CSS 9 – Meldung */
-.meldung {
+.meldung {background-color: #0ee479;
 
 }
 
 /* CSS 10 – Rezept-Ideen */
-.idee {
+.idee {background-color:#8b8b8b ;
+border: 3px solid;
+opacity: 0.5;
+border-color: #373737 #ffffff #ffffff #373737;
 
 }
 
-.idee.geschafft {
-
+.idee.geschafft {background-color:#1cce89 ;
+border: 3px solid;
+border-color: #373737 #ffffff #ffffff #373737;
+opacity: 1;
 }
 
 /* CSS 11 – Fußzeile */
