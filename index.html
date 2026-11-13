@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leons Webseiten</title>
+    <meta name="description" content="Alle Webseiten und Apps, die Leon Stanitzok im Praktikum gebaut hat.">
+    <style>
+        :root {
+            --akzent: #5bd16a;
+            --akzent2: #2f8f3c;
+            --hintergrund: #0f1115;
+            --flaeche: #181b22;
+            --flaeche2: #20242d;
+            --rand: #2c313c;
+            --text: #eef0f4;
+            --text2: #a3a9b6;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            background: var(--hintergrund);
+            color: var(--text);
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+            line-height: 1.5;
+        }
+
+        a { color: inherit; }
+
+        .seite {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 16px 60px;
+        }
+
+        header {
+            padding: 72px 16px 40px;
+            text-align: center;
+            background:
+                radial-gradient(600px 220px at 50% 0%, color-mix(in srgb, var(--akzent) 28%, transparent), transparent 70%);
+        }
+
+        .hallo {
+            display: inline-block;
+            margin: 0 0 14px;
+            padding: 4px 14px;
+            border: 1px solid var(--rand);
+            border-radius: 999px;
+            color: var(--text2);
+            font-size: 14px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(36px, 7vw, 64px);
+            line-height: 1.1;
+            letter-spacing: -1px;
+        }
+
+        h1 span {
+            background: linear-gradient(90deg, var(--akzent), color-mix(in srgb, var(--akzent) 55%, white));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .intro {
+            max-width: 560px;
+            margin: 16px auto 0;
+            color: var(--text2);
+            font-size: 18px;
+        }
+
+        .zahlen {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        .zahl {
+            min-width: 120px;
+            padding: 12px 18px;
+            background: var(--flaeche);
+            border: 1px solid var(--rand);
+            border-radius: 14px;
+        }
+
+        .zahl strong {
+            display: block;
+            font-size: 26px;
+            color: var(--akzent);
+        }
+
+        .zahl span {
+            color: var(--text2);
+            font-size: 14px;
+        }
+
+        section { margin-top: 48px; }
+
+        .abschnitt-kopf {
+            display: flex;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 4px 14px;
+            margin-bottom: 18px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--rand);
+        }
+
+        .abschnitt-kopf h2 { margin: 0; font-size: 26px; }
+        .abschnitt-kopf p { margin: 0; color: var(--text2); }
+
+        .karten {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 18px;
+        }
+
+        .karte {
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            background: var(--flaeche);
+            border: 1px solid var(--rand);
+            border-radius: 18px;
+            transition: transform 0.15s, border-color 0.15s, background 0.15s;
+        }
+
+        .karte:hover {
+            transform: translateY(-4px);
+            border-color: var(--akzent);
+            background: var(--flaeche2);
+        }
+
+        .karte-emoji {
+            display: grid;
+            place-items: center;
+            width: 52px;
+            height: 52px;
+            margin-bottom: 12px;
+            font-size: 28px;
+            background: color-mix(in srgb, var(--akzent) 16%, transparent);
+            border-radius: 14px;
+        }
+
+        .karte h3 { margin: 0 0 6px; font-size: 19px; }
+
+        .karte p {
+            flex: 1;
+            margin: 0 0 16px;
+            color: var(--text2);
+            font-size: 15px;
+        }
+
+        .karte-links {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .knopf {
+            padding: 8px 16px;
+            background: var(--akzent);
+            color: #0b0d10;
+            font-weight: 700;
+            text-decoration: none;
+            border-radius: 10px;
+        }
+
+        .knopf:hover { background: color-mix(in srgb, var(--akzent) 80%, white); }
+
+        .code {
+            color: var(--text2);
+            font-size: 14px;
+        }
+
+        .code:hover { color: var(--text); }
+
+        footer {
+            margin-top: 64px;
+            padding-top: 20px;
+            border-top: 1px solid var(--rand);
+            color: var(--text2);
+            font-size: 14px;
+            text-align: center;
+        }
+
+        @media (max-width: 500px) {
+            header { padding-top: 48px; }
+            .karten { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <p class="hallo">👋 Praktikum bei freenet</p>
+        <h1>Die Webseiten von <span>Leon</span></h1>
+        <p class="intro">Hier sind alle Webseiten und Apps, die Leon Stanitzok im Praktikum gebaut hat: von der ersten HTML-Seite bis zur React-App mit echten Daten.</p>
+        <div class="zahlen">
+            <div class="zahl"><strong>11</strong><span>Projekte</span></div>
+            <div class="zahl"><strong>5</strong><span>React-Apps</span></div>
+            <div class="zahl"><strong>5</strong><span>HTML & CSS</span></div>
+            <div class="zahl"><strong>1</strong><span>JavaScript</span></div>
+        </div>
+    </header>
+
+    <main class="seite">
+
+        <section>
+            <div class="abschnitt-kopf">
+                <h2>React-Apps</h2>
+                <p>Echte Daten aus dem Internet, mit React gebaut</p>
+            </div>
+            <div class="karten">
+                <article class="karte">
+                    <div class="karte-emoji" aria-hidden="true">👑</div>
+                    <h3>Clash Royale</h3>
+                    <p>Deck-Builder: acht Karten wählen und die Elixierkosten im Blick behalten.</p>
+                    <div class="karte-links">
+                        <a class="knopf" href="react-aufgaben/04-clash-royale/">Ansehen →</a>
+                        <a class="code" href="https://github.com/Iandraws-freenet/Webseiten-Leon-Stanitzok/tree/main/react-aufgaben/04-clash-royale" target="_blank" rel="noopener">Code</a>
+                    </div>
+                </article>
+                <article class="karte">
+                    <div class="karte-emoji" aria-hidden="true">⛏️</div>
+                    <h3>Minecraft</h3>
+                    <p>Hotbar-Builder mit allen Blöcken und Items aus Minecraft.</p>
+                    <div class="karte-links">
+                        <a class="knopf" href="react-aufgaben/05-minecraft/">Ansehen →</a>
+                        <a class="code" href="https://github.com/Iandraws-freenet/Webseiten-Leon-Stanitzok/tree/main/react-aufgaben/05-minecraft" target="_blank" rel="noopener">Code</a>
+                    </div>
+                </article>
+                <article class="karte">
+                    <div class="karte-emoji" aria-hidden="true">🛠️</div>
+                    <h3>Minecraft-Werkbank</h3>
+                    <p>Eine Werkbank wie im Spiel: Zutaten hineinziehen und Rezepte craften.</p>
+                    <div class="karte-links">
+                        <a class="knopf" href="react-aufgaben/06-minecraft-werkbank/">Ansehen →</a>
+                        <a class="code" href="https://github.com/Iandraws-freenet/Webseiten-Leon-Stanitzok/tree/main/react-aufgaben/06-minecraft-werkbank" target="_blank" rel="noopener">Code</a>
+                    </div>
+                </article>
+                <article class="karte">
+                    <div class="karte-emoji" aria-hidden="true">🔴</div>
+                    <h3>Pokémon</h3>
+                    <p>Pokédex mit den ersten 151 Pokémon, Typen und Werten.</p>
+                    <div class="karte-links">
+                        <a class="knopf" href="react-aufgaben/08-pokemon/">Ansehen →</a>
+                        <a class="code" href="https://github.com/Iandraws-freenet/Webseiten-Leon-Stanitzok/tree/main/react-aufgaben/08-pokemon" target="_blank" rel="noopener">Code</a>
+                    </div>
+                </article>
+                <article class="karte">
+                    <div class="karte-emoji" aria-hidden="true">⚔️</div>
+                    <h3>Pokémon-Kampf</h3>
+                    <p>Kampf-Arena: zwei Pokémon auswählen und gegeneinander antreten lassen.</p>
+                    <div class="karte-links">
+                        <a class="knopf" href="react-aufgaben/13-pokemon-kampf/">Ansehen →</a>
+                        <a class="code" href="https://github.com/Iandraws-freenet/Webseiten-Leon-Stanitzok/tree/main/react-aufgaben/13-pokemon-kampf" target="_blank" rel="noopener">Code</a>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section>
+            <div class="abschnitt-kopf">
+                <h2>HTML & CSS</h2>
+                <p>Die ersten Schritte: Struktur und Gestaltung</p>
+            </div>
+            <div class="karten">
+                <article class="karte">
+                    <div class="karte-emoji" aria-hidden="true">👋</div>
+                    <h3>Meine erste Webseite</h3>
+                    <p>Die allererste eigene Seite: ein Steckbrief in HTML.</p>
+                    <div class="karte-links">
+                        <a class="knopf" href="01-erste-webseite/">Ansehen →</a>
+                        <a class="code" href="https://github.com/Iandraws-freenet/Webseiten-Leon-Stanitzok/tree/main/01-erste-webseite" target="_blank" rel="noopener">Code</a>
+                    </div>
+                </article>
+                <article class="karte">
+                    <div class="karte-emoji" aria-hidden="true">🔗</div>
+                    <h3>Listen und Links</h3>
+                    <p>Lieblingsdinge als Listen und nützliche Links.</p>
+                    <div class="karte-links">
+                        <a class="knopf" href="02-listen-und-links/">Ansehen →</a>
+                        <a class="code" href="https://github.com/Iandraws-freenet/Webseiten-Leon-Stanitzok/tree/main/02-listen-und-links" target="_blank" rel="noopener">Code</a>
+                    </div>
+                </article>
+                <article class="karte">
+                    <div class="karte-emoji" aria-hidden="true">🖼️</div>
+                    <h3>Bilder und Tabellen</h3>
+                    <p>Bilder einbauen und einen Stundenplan als Tabelle.</p>
+                    <div class="karte-links">
+                        <a class="knopf" href="03-bilder-und-tabellen/">Ansehen →</a>
+                        <a class="code" href="https://github.com/Iandraws-freenet/Webseiten-Leon-Stanitzok/tree/main/03-bilder-und-tabellen" target="_blank" rel="noopener">Code</a>
+                    </div>
+                </article>
+                <article class="karte">
+                    <div class="karte-emoji" aria-hidden="true">🎨</div>
+                    <h3>Farben und Schrift</h3>
+                    <p>Eine Seite mit CSS gestaltet: Farben, Schriften, Abstände.</p>
+                    <div class="karte-links">
+                        <a class="knopf" href="04-css-farben-und-schrift/">Ansehen →</a>
+                        <a class="code" href="https://github.com/Iandraws-freenet/Webseiten-Leon-Stanitzok/tree/main/04-css-farben-und-schrift" target="_blank" rel="noopener">Code</a>
+                    </div>
+                </article>
+                <article class="karte">
+                    <div class="karte-emoji" aria-hidden="true">📦</div>
+                    <h3>Das Box-Model</h3>
+                    <p>Drei Info-Boxen mit Rahmen, Innen- und Außenabständen.</p>
+                    <div class="karte-links">
+                        <a class="knopf" href="05-box-model/">Ansehen →</a>
+                        <a class="code" href="https://github.com/Iandraws-freenet/Webseiten-Leon-Stanitzok/tree/main/05-box-model" target="_blank" rel="noopener">Code</a>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section>
+            <div class="abschnitt-kopf">
+                <h2>JavaScript</h2>
+                <p>Programmieren im Browser</p>
+            </div>
+            <div class="karten">
+                <article class="karte">
+                    <div class="karte-emoji" aria-hidden="true">🟨</div>
+                    <h3>Variablen und Ausgabe</h3>
+                    <p>Die ersten Zeilen JavaScript: Werte speichern und ausgeben.</p>
+                    <div class="karte-links">
+                        <a class="knopf" href="javascript-uebungen/01-variablen-und-ausgabe/">Ansehen →</a>
+                        <a class="code" href="https://github.com/Iandraws-freenet/Webseiten-Leon-Stanitzok/tree/main/javascript-uebungen/01-variablen-und-ausgabe" target="_blank" rel="noopener">Code</a>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <footer>
+            Gebaut von Leon Stanitzok · <a href="https://github.com/Iandraws-freenet/Webseiten-Leon-Stanitzok" target="_blank" rel="noopener">Code auf GitHub</a>
+        </footer>
+    </main>
+</body>
+</html>
