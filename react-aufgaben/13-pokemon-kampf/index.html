@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokémon-Kampf-Arena</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- React und Babel aus dem Internet laden (nicht verändern) -->
+    <script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.26.4/babel.min.js"></script>
+
+    <!-- Gespeicherte Pokémon-Daten (erzeugt mit: node daten-aktualisieren.js pokemonkampf) -->
+    <script src="daten.js"></script>
+</head>
+<body>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+
+        const { useState, useEffect, useRef } = React;
+
+        // Bilder über jsDelivr (nicht direkt von GitHub, dort gibt es ein Limit)
+        const SPRITE_URL = "https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/";
+        const RUECKEN_URL = "https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/back/";
+        const ARTWORK_URL = "https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/other/official-artwork/";
+
+        // Die PokéAPI (REST): kostenlos, ohne Key und ohne Limit
+        const POKEAPI = "https://pokeapi.co/api/v2/";
+        const ANZAHL_POKEMON = 151;
+        const ANZAHL_TYPEN = 18;
+
+        // Der Zwischenspeicher (localStorage) bleibt auch nach dem Schließen des Browsers, aber nur 24 Stunden gültig.
+        const EIN_TAG = 24 * 60 * 60 * 1000;
+
+        // Alle Adressen, die die App braucht: 18 Typen und für jedes Pokémon Werte und Namen
+        function alleAdressen() {
+            const adressen = [];
+            for (let id = 1; id <= ANZAHL_TYPEN; id++) adressen.push(POKEAPI + "type/" + id);
+            for (let id = 1; id <= ANZAHL_POKEMON; id++) {
+                adressen.push(POKEAPI + "pokemon/" + id);
+                adressen.push(POKEAPI + "pokemon-species/" + id);
+            }
+            return adressen;
+        }
+
+        // Die Antworten der PokéAPI sind riesig. Wir behalten nur, was die App braucht.
+        // (Muss genauso arbeiten wie "schlank" in daten-aktualisieren.js)
+        function schlank(d) {
+            const deutsch = (namen) => (namen || [])
+                .filter((n) => n.language.name === "de")
+                .map((n) => ({ name: n.name, language: { name: "de" } }));
+            const nurNamen = (liste) => liste.map((t) => ({ name: t.name }));
+
+            if (d.damage_relations) {
+                return {
+                    id: d.id, name: d.name, names: deutsch(d.names),
+                    damage_relations: {
+                        double_damage_to: nurNamen(d.damage_relations.double_damage_to),
+                        half_damage_to: nurNamen(d.damage_relations.half_damage_to),
+                        no_damage_to: nurNamen(d.damage_relations.no_damage_to)
+                    }
+                };
+            }
+            if (d.stats) {
+                return {
+                    id: d.id,
+                    types: d.types.map((t) => ({ type: { name: t.type.name } })),
+                    stats: d.stats.map((s) => ({ base_stat: s.base_stat, stat: { name: s.stat.name } }))
+                };
+            }
+            return { id: d.id, name: d.name, names: deutsch(d.names) };
+        }
+
+        // Daten holen: zuerst aus daten.js (gespeichert), sonst aus dem Zwischenspeicher, sonst aus dem Internet.
+        // Aus dem Internet laden wir in Paketen von 20 Anfragen gleichzeitig.
+        function holeAlles() {
+            const gespeichert = window.GESPEICHERTE_DATEN || {};
+            let zwischenspeicher = {};
+            try {
+                const alt = JSON.parse(localStorage.getItem("pokemon-kampf"));
+                if (alt && Date.now() - alt.zeit < EIN_TAG) zwischenspeicher = alt.daten;
+            } catch (e) { /* ohne Zwischenspeicher weiterarbeiten */ }
+
+            const ergebnis = {};
+            const fehlt = [];
+            alleAdressen().forEach((adresse) => {
+                const da = gespeichert[adresse] || zwischenspeicher[adresse];
+                if (da) ergebnis[adresse] = da;
+                else fehlt.push(adresse);
+            });
+            if (fehlt.length === 0) return Promise.resolve(ergebnis);
+
+            const pakete = [];
+            for (let i = 0; i < fehlt.length; i += 20) pakete.push(fehlt.slice(i, i + 20));
+
+            let kette = Promise.resolve();
+            pakete.forEach((paket) => {
+                kette = kette.then(() => Promise.all(paket.map((adresse) =>
+                    fetch(adresse)
+                        .then((antwort) => {
+                            if (!antwort.ok) throw new Error("HTTP " + antwort.status);
+                            return antwort.json();
+                        })
+                        .then((daten) => { ergebnis[adresse] = schlank(daten); })
+                )));
+            });
+            return kette.then(() => {
+                try { localStorage.setItem("pokemon-kampf", JSON.stringify({ zeit: Date.now(), daten: ergebnis })); } catch (e) { }
+                return ergebnis;
+            });
+        }
+
+        // --- KAMPF-LOGIK START (reines JavaScript, fertig) ---
+
+        // Typen: CSS-Klasse auf Deutsch (ohne Umlaute)
+        const TYP_KLASSE = {
+            normal: "normal", fire: "feuer", water: "wasser", grass: "pflanze", electric: "elektro",
+            ice: "eis", fighting: "kampf", poison: "gift", ground: "boden", flying: "flug",
+            psychic: "psycho", bug: "kaefer", rock: "gestein", ghost: "geist", dragon: "drache",
+            dark: "unlicht", steel: "stahl", fairy: "fee"
+        };
+
+        // Jeder Typ hat seine eigene Attacke
+        const ATTACKEN_NAMEN = {
+            normal: "Bodyslam", fire: "Flammenwurf", water: "Surfer", grass: "Rasierblatt", electric: "Donnerblitz",
+            ice: "Eisstrahl", fighting: "Karateschlag", poison: "Matschbombe", ground: "Erdbeben", flying: "Flügelschlag",
+            psychic: "Psychokinese", bug: "Käferbiss", rock: "Steinhagel", ghost: "Spukball", dragon: "Drachenklaue",
+            dark: "Biss", steel: "Eisenschweif", fairy: "Mondgewalt"
+        };
+
+        const GRUND_SCHADEN = 34;     // so dauert ein Kampf etwa 3 bis 6 Runden
+        const TACKLE_STAERKE = 0.7;   // Tackle ist schwächer ...
+        const TREFFERQUOTE = 0.9;     // ... trifft aber immer. Typ-Attacken gehen manchmal daneben.
+
+        // Die Antworten der API in einfache Typen und Pokémon umwandeln
+        function umwandeln(daten) {
+            const typen = {};
+            for (let id = 1; id <= ANZAHL_TYPEN; id++) {
+                const t = daten[POKEAPI + "type/" + id];
+                typen[t.name] = {
+                    en: t.name,
+                    name: t.names[0] ? t.names[0].name : t.name,
+                    klasse: TYP_KLASSE[t.name] || t.name,
+                    doppelt: t.damage_relations.double_damage_to.map((z) => z.name),
+                    halb: t.damage_relations.half_damage_to.map((z) => z.name),
+                    nichts: t.damage_relations.no_damage_to.map((z) => z.name)
+                };
+            }
+
+            const pokemon = [];
+            for (let id = 1; id <= ANZAHL_POKEMON; id++) {
+                const p = daten[POKEAPI + "pokemon/" + id];
+                const art = daten[POKEAPI + "pokemon-species/" + id];
+                const wert = (name) => p.stats.find((s) => s.stat.name === name).base_stat;
+
+                const eigeneTypen = p.types.map((t) => typen[t.type.name]);
+                const kp = wert("hp") + 110;
+                const angriff = Math.max(wert("attack"), wert("special-attack"));
+                const verteidigung = Math.round((wert("defense") + wert("special-defense")) / 2);
+                const initiative = wert("speed");
+
+                // Attacken: eine für jeden eigenen Typ und dazu Tackle
+                const attacken = eigeneTypen.map((typ) => ({
+                    name: ATTACKEN_NAMEN[typ.en], typ: typ, staerke: 1, trefferquote: TREFFERQUOTE
+                }));
+                attacken.push({ name: "Tackle", typ: typen.normal, staerke: TACKLE_STAERKE, trefferquote: 1 });
+
+                pokemon.push({
+                    id: id,
+                    nummer: "#" + String(id).padStart(3, "0"),
+                    name: art.names[0] ? art.names[0].name : art.name,
+                    typen: eigeneTypen,
+                    kp: kp,
+                    angriff: angriff,
+                    verteidigung: verteidigung,
+                    initiative: initiative,
+                    werte: [
+                        { name: "KP", wert: kp, max: 360 },
+                        { name: "Angriff", wert: angriff, max: 160 },
+                        { name: "Verteidigung", wert: verteidigung, max: 160 },
+                        { name: "Initiative", wert: initiative, max: 160 }
+                    ],
+                    attacken: attacken
+                });
+            }
+            return { typen: typen, pokemon: pokemon };
+        }
+
+        // Wie gut wirkt ein Attacken-Typ gegen ein Pokémon? 2 = sehr effektiv, 0.5 = nicht sehr effektiv, 0 = gar nicht.
+        // Hat der Verteidiger zwei Typen, wird malgenommen (z. B. 2 x 2 = 4).
+        function wirkung(attackenTyp, verteidiger) {
+            let faktor = 1;
+            verteidiger.typen.forEach((typ) => {
+                if (attackenTyp.doppelt.includes(typ.en)) faktor = faktor * 2;
+                else if (attackenTyp.halb.includes(typ.en)) faktor = faktor * 0.5;
+                else if (attackenTyp.nichts.includes(typ.en)) faktor = 0;
+            });
+            return faktor;
+        }
+
+        // Schaden = Grundwert x Stärke der Attacke x Angriff / Verteidigung x Wirkung x ein bisschen Zufall
+        function berechneSchaden(angreifer, attacke, verteidiger, zufall) {
+            const faktor = wirkung(attacke.typ, verteidiger);
+            if (faktor === 0) return 0;
+            const schaden = GRUND_SCHADEN * attacke.staerke * (angreifer.angriff / verteidiger.verteidigung) * faktor * (0.85 + 0.15 * zufall);
+            return Math.max(1, Math.round(schaden));
+        }
+
+        // Ein Angriff: Was passiert, und welcher Text erscheint?
+        function greifeAn(angreifer, attacke, verteidiger) {
+            const anfang = angreifer.name + " setzt " + attacke.name + " ein!";
+            if (Math.random() > attacke.trefferquote) {
+                return { schaden: 0, klasse: "daneben", text: anfang + " Daneben!" };
+            }
+            const faktor = wirkung(attacke.typ, verteidiger);
+            const schaden = berechneSchaden(angreifer, attacke, verteidiger, Math.random());
+            if (faktor === 0) return { schaden: 0, klasse: "schwach", text: anfang + " Es hat keine Wirkung!" };
+            const minus = " (−" + schaden + " KP)";
+            if (faktor > 1) return { schaden: schaden, klasse: "effektiv", text: anfang + " Das ist sehr effektiv!" + minus };
+            if (faktor < 1) return { schaden: schaden, klasse: "schwach", text: anfang + " Das ist nicht sehr effektiv." + minus };
+            return { schaden: schaden, klasse: "treffer", text: anfang + minus };
+        }
+
+        // Der Gegner nimmt meistens seine beste Attacke, manchmal eine zufällige
+        function waehleGegnerAttacke(gegner, spieler) {
+            if (Math.random() < 0.25) return gegner.attacken[Math.floor(Math.random() * gegner.attacken.length)];
+            let beste = gegner.attacken[0];
+            let besterWert = -1;
+            gegner.attacken.forEach((a) => {
+                const w = a.staerke * a.trefferquote * wirkung(a.typ, spieler);
+                if (w > besterWert) { beste = a; besterWert = w; }
+            });
+            return beste;
+        }
+
+        // ⭐ Gegen welche Typen sind die Attacken von diesem Pokémon sehr effektiv?
+        function starkGegen(pokemon, typen) {
+            return Object.values(typen).filter((ziel) => pokemon.typen.some((typ) => typ.doppelt.includes(ziel.en)));
+        }
+
+        // ⭐ Welche Attacken-Typen tun diesem Pokémon besonders weh?
+        function schwachGegen(pokemon, typen) {
+            return Object.values(typen).filter((typ) => wirkung(typ, pokemon) > 1);
+        }
+
+        // --- KAMPF-LOGIK ENDE ---
+
+        function zufaellig(liste) {
+            return liste[Math.floor(Math.random() * liste.length)];
+        }
+
+        // ⭐⭐ Teil 4: die Orden (ab so vielen Siegen in Folge)
+        const ORDEN = [
+            { name: "Bronze-Orden", emoji: "🥉", ab: 3 },
+            { name: "Silber-Orden", emoji: "🥈", ab: 5 },
+            { name: "Gold-Orden", emoji: "🥇", ab: 10 }
+        ];
+
+
+        // =====================================================
+        // Eine Pokémon-Karte zum Auswählen
+        // =====================================================
+        function PokemonKarte({ pokemon, gewaehlt, onKlick, onInfo }) {
+            const bild = SPRITE_URL + pokemon.id + ".png";
+
+            return (
+                <div className={gewaehlt ? "karte gewaehlt" : "karte"} onClick={onKlick}>
+
+                    {/* ✏️ DEIN HTML 2: Nummer (span className="nummer") mit {pokemon.nummer},
+                                       Bild (img) mit src={bild} und Name (h3) mit {pokemon.name} */}
+                    <span className="nummer"> {pokemon.nummer}</span>
+                    <img src={bild} alt={pokemon.name} ></img>
+                    <h3>{pokemon.name}</h3>
+
+                    <div className="typen">
+                        {pokemon.typen.map((typ) => (
+                            <span key={typ.klasse} className={"typ " + typ.klasse}>
+                                {/* ✏️ DEIN HTML 2: der Name vom Typ {typ.name} */}
+                                {typ.name}
+                            </span>
+                        ))}
+                    </div>
+
+                    {/* ⭐ Erweiterung: Info-Knopf (fertig) */}
+                    <button
+                        className="info-button"
+                        title="Mehr Infos"
+                        onClick={(e) => {
+                            e.stopPropagation();   // Info-Klick startet KEINEN Kampf
+                            onInfo();
+                        }}
+                    >
+                        ℹ️
+                    </button>
+                </div>
+            );
+        }
+
+
+        // =====================================================
+        // Ein Pokémon in der Arena (deins oder der Gegner)
+        // =====================================================
+        function Kaempfer({ pokemon, kp, seite, treffer }) {
+            // Dein Pokémon sieht man von hinten, den Gegner von vorn
+            const bild = (seite === "spieler" ? RUECKEN_URL : SPRITE_URL) + pokemon.id + ".png";
+
+            // Fertig: Wie voll ist der KP-Balken, und welche Klasse hat er?
+            const prozent = (kp / pokemon.kp) * 100;
+            let kpKlasse = "gut";
+            if (prozent <= 50) kpKlasse = "mittel";
+            if (prozent <= 20) kpKlasse = "schlecht";
+
+            let klassen = "kaempfer " + seite;
+            if (kp === 0) klassen = klassen + " besiegt";
+
+            return (
+                <div className={klassen}>
+                    <div className="kaempfer-info">
+
+                        {/* ✏️ DEIN HTML 4: der Name (h3) mit {pokemon.name} */}
+                        <h3>{pokemon.name}</h3>
+
+                        <div className="typen">
+                            {pokemon.typen.map((typ) => (
+                                <span key={typ.klasse} className={"typ " + typ.klasse}>
+                                    {/* ✏️ DEIN HTML 4: der Name vom Typ {typ.name} */}
+                                    {typ.name}
+                                </span>
+                            ))}
+                        </div>
+
+                        <div className="kp-platz">
+                            <div className={"kp-balken " + kpKlasse} style={{ width: prozent + "%" }}></div>
+                        </div>
+
+                        {/* ✏️ DEIN HTML 4: ein p (className="kp-text") mit {kp} / {pokemon.kp} KP */}
+                        <p className="kp-text">{kp} / {pokemon.kp} KP</p>
+
+                    </div>
+
+                    {/* Fertig: Das Bild wackelt bei jedem Treffer */}
+                    <img
+                        key={treffer}
+                        className={treffer > 0 ? "kaempfer-bild getroffen" : "kaempfer-bild"}
+                        src={bild}
+                        alt={pokemon.name}
+                    />
+                </div>
+            );
+        }
+
+
+        // =====================================================
+        // ⭐ ERWEITERUNG: Infos zu einem Pokémon (Klick auf ℹ️)
+        // =====================================================
+        function PokemonDetails({ pokemon, typen, onKampf, onSchliessen }) {
+            const artwork = ARTWORK_URL + pokemon.id + ".png";
+
+            // Fertig: Stärken und Schwächen ausrechnen
+            const stark = starkGegen(pokemon, typen);
+            const schwach = schwachGegen(pokemon, typen);
+
+            // Fertig: Links ins Internet
+            const pokewiki = "https://www.pokewiki.de/" + encodeURIComponent(pokemon.name);
+            const youtube = "https://www.youtube.com/results?search_query=" + encodeURIComponent("Pokémon " + pokemon.name);
+
+            return (
+                <div className="overlay" onClick={onSchliessen}>
+                    <div className="details" onClick={(e) => e.stopPropagation()}>
+                        <button className="schliessen" onClick={onSchliessen}>✕</button>
+
+                        {/* ✏️ DEIN HTML 9: großes Bild (img className="artwork") mit src={artwork}
+                                           und Nummer und Name in einer h2 ({pokemon.nummer} {pokemon.name}) */}
+                        <img className="artwork" src={artwork} alt={pokemon.name}></img>
+
+                        <div className="typen">
+                            {pokemon.typen.map((typ) => (
+                                <span key={typ.klasse} className={"typ " + typ.klasse}>
+                                    {/* ✏️ DEIN HTML 9: der Name vom Typ {typ.name} */}
+                                    {typ.name}
+                                </span>
+                            ))}
+                        </div>
+
+                        <div className="basiswerte">
+                            {pokemon.werte.map((w) => (
+                                <div key={w.name} className="wert-zeile">
+                                    <span className="wert-name">
+                                        {/* ✏️ DEIN HTML 10: der Name vom Wert {w.name} */}
+                                        {w.name}
+                                    </span>
+                                    <div className="balken-platz">
+                                        <div className="balken" style={{ width: Math.min(100, (w.wert / w.max) * 100) + "%" }}></div>
+                                    </div>
+                                    <strong className="wert-zahl">
+                                        {/* ✏️ DEIN HTML 10: die Zahl {w.wert} */}
+                                        {w.wert}
+                                    </strong>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="staerken">
+                            {/* ✏️ DEIN HTML 11: Überschrift (h3) "💪 Stark gegen" */}
+                            <h3>💪 Stark gegen</h3>
+
+                            <div className="typen">
+                                {stark.map((typ) => (
+                                    <span key={typ.klasse} className={"typ " + typ.klasse}>
+                                        {/* ✏️ DEIN HTML 11: der Name vom Typ {typ.name} */}
+                                        {typ.name}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="schwaechen">
+                            {/* ✏️ DEIN HTML 11: Überschrift (h3) "😨 Schwach gegen" */}
+                            <h3>😨 Schwach gegen</h3>
+
+                            <div className="typen">
+                                {schwach.map((typ) => (
+                                    <span key={typ.klasse} className={"typ " + typ.klasse}>
+                                        {/* ✏️ DEIN HTML 11: der Name vom Typ {typ.name} */}
+                                        {typ.name}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="link-leiste">
+                            {/* ✏️ DEIN HTML 12: zwei Links (a className="link-button" target="_blank"):
+                                                📖 PokéWiki mit {pokewiki} und ▶️ YouTube mit {youtube} */}
+                                                <a className="link-button" target="_blank">{pokewiki}</a>
+                                                <a className="link-button" target="_blank">{youtube}</a>
+
+                        </div>
+
+                        <button className="kampf-button" onClick={onKampf}>
+                            {/* ✏️ DEIN HTML 12: Text "⚔️ Mit diesem Pokémon kämpfen" */}
+                            ⚔️ Mit diesem Pokémon kämpfen
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+
+        // =====================================================
+        // Die App (JavaScript ist fertig)
+        // =====================================================
+        function App() {
+            const [pokemon, setPokemon] = useState([]);
+            const [typen, setTypen] = useState({});
+            const [fehler, setFehler] = useState(false);
+            const [suche, setSuche] = useState("");
+            const [filter, setFilter] = useState("alle");
+            const [infoPokemon, setInfoPokemon] = useState(null);   // ⭐ Pokémon mit offener Info-Box
+
+            // Der Kampf
+            const [spieler, setSpieler] = useState(null);
+            const [gegner, setGegner] = useState(null);
+            const [kpSpieler, setKpSpieler] = useState(0);
+            const [kpGegner, setKpGegner] = useState(0);
+            const [trefferSpieler, setTrefferSpieler] = useState(0);
+            const [trefferGegner, setTrefferGegner] = useState(0);
+            const [meldungen, setMeldungen] = useState([]);
+            const [ergebnis, setErgebnis] = useState(null);   // null, "sieg" oder "niederlage"
+            const [runde, setRunde] = useState(0);
+            const arena = useRef(null);
+
+            // ⭐⭐ Teil 4: Siegesserie, Rekord und Protokoll
+            const [serie, setSerie] = useState(0);
+            const [rekord, setRekord] = useState(() => {
+                try { return Number(localStorage.getItem("pokemon-kampf-rekord")) || 0; } catch (e) { return 0; }
+            });
+            const [protokoll, setProtokoll] = useState([]);
+
+            useEffect(() => {
+                holeAlles()
+                    .then((daten) => {
+                        const fertig = umwandeln(daten);
+                        setTypen(fertig.typen);
+                        setPokemon(fertig.pokemon);
+                    })
+                    .catch(() => setFehler(true));
+            }, []);
+
+            // Alle Typen, die es bei den Pokémon gibt (für die Filter-Buttons)
+            const alleTypen = [];
+            pokemon.forEach((p) => p.typen.forEach((typ) => {
+                if (!alleTypen.some((t) => t.klasse === typ.klasse)) alleTypen.push(typ);
+            }));
+
+            const angezeigtePokemon = pokemon
+                .filter((p) => filter === "alle" || p.typen.some((t) => t.klasse === filter))
+                .filter((p) => p.name.toLowerCase().includes(suche.toLowerCase()) || String(p.id) === suche.trim());
+
+            // Einen Kampf starten: Der Gegner wird zufällig gewählt
+            function kampfStarten(meins) {
+                // Wer mitten im Kampf wegläuft, verliert seine Siegesserie!
+                if (spieler && !ergebnis && runde > 0) setSerie(0);
+
+                const neuerGegner = zufaellig(pokemon.filter((p) => p.id !== meins.id));
+                setSpieler(meins);
+                setGegner(neuerGegner);
+                setKpSpieler(meins.kp);
+                setKpGegner(neuerGegner.kp);
+                setTrefferSpieler(0);
+                setTrefferGegner(0);
+                setMeldungen([{ klasse: "treffer", text: "Ein wildes " + neuerGegner.name + " erscheint! Los, " + meins.name + "!" }]);
+                setProtokoll([]);
+                setErgebnis(null);
+                setRunde(0);
+                setInfoPokemon(null);
+                setTimeout(() => {
+                    if (arena.current) arena.current.scrollIntoView({ behavior: "smooth", block: "center" });
+                }, 50);
+            }
+
+            function anderesPokemon() {
+                setSpieler(null);
+                setGegner(null);
+                setProtokoll([]);
+            }
+
+            // Eine Runde: Du greifst an und der Gegner greift an. Wer mehr Initiative hat, ist zuerst dran.
+            function attackeEinsetzen(attacke) {
+                if (ergebnis) return;
+                const gegnerAttacke = waehleGegnerAttacke(gegner, spieler);
+                const spielerZuerst = spieler.initiative >= gegner.initiative;
+                const zuege = spielerZuerst
+                    ? [{ wer: "spieler", attacke: attacke }, { wer: "gegner", attacke: gegnerAttacke }]
+                    : [{ wer: "gegner", attacke: gegnerAttacke }, { wer: "spieler", attacke: attacke }];
+
+                let meineKp = kpSpieler;
+                let seineKp = kpGegner;
+                const neueMeldungen = [];
+                let neuesErgebnis = null;
+
+                zuege.forEach((zug) => {
+                    if (neuesErgebnis) return;   // Wer besiegt ist, greift nicht mehr an
+                    if (zug.wer === "spieler") {
+                        const a = greifeAn(spieler, zug.attacke, gegner);
+                        seineKp = Math.max(0, seineKp - a.schaden);
+                        if (a.schaden > 0) setTrefferGegner(trefferGegner + 1);
+                        neueMeldungen.push({ klasse: a.klasse, text: a.text, wer: "spieler" });
+                        if (seineKp === 0) neuesErgebnis = "sieg";
+                    } else {
+                        const a = greifeAn(gegner, zug.attacke, spieler);
+                        meineKp = Math.max(0, meineKp - a.schaden);
+                        if (a.schaden > 0) setTrefferSpieler(trefferSpieler + 1);
+                        neueMeldungen.push({ klasse: a.klasse, text: a.text, wer: "gegner" });
+                        if (meineKp === 0) neuesErgebnis = "niederlage";
+                    }
+                });
+
+                setKpSpieler(meineKp);
+                setKpGegner(seineKp);
+                setMeldungen(neueMeldungen);
+                setRunde(runde + 1);
+                setProtokoll([...protokoll, ...neueMeldungen.map((m) => ({ ...m, runde: runde + 1 }))]);
+
+                if (neuesErgebnis) {
+                    setErgebnis(neuesErgebnis);
+                    // ⭐⭐ Teil 4: Siegesserie zählen und Rekord merken
+                    if (neuesErgebnis === "sieg") {
+                        const neueSerie = serie + 1;
+                        setSerie(neueSerie);
+                        if (neueSerie > rekord) {
+                            setRekord(neueSerie);
+                            try { localStorage.setItem("pokemon-kampf-rekord", String(neueSerie)); } catch (e) { }
+                        }
+                    } else {
+                        setSerie(0);
+                    }
+                }
+            }
+
+            let ergebnisText = "";
+            if (ergebnis === "sieg") ergebnisText = "🎉 Gewonnen! " + gegner.name + " wurde besiegt!";
+            if (ergebnis === "niederlage") ergebnisText = "😵 Verloren! " + spieler.name + " wurde besiegt.";
+
+            // ⭐⭐ TEIL 4 (fertig): Kampf mit einem zufälligen Pokémon
+            function zufallsKampf() {
+                kampfStarten(zufaellig(pokemon));
+            }
+
+            return (
+                <div className="seite">
+
+                    <header>
+                        {/* ✏️ DEIN HTML 1: Überschrift (h1) und Untertitel (p className="untertitel") */}
+                        <h1>⚔️ Pokémon-Kampf</h1>
+                        <p className="untertitel">Defeat your opponent</p>
+                    </header>
+
+                    {/* ===================== ⭐⭐ TEIL 4: Siegesserie und Orden ===================== */}
+                    <section className="serie-box">
+                        {/* ✏️ DEIN HTML 13: Überschrift (h2) "🏆 Siegesserie",
+                                            ein p (className="serie") mit "{serie} Siege in Folge"
+                                            und ein p mit "Rekord: {rekord}" */}
+                        <h2>🏆 Siegesserie</h2>
+                        <p className="serie">{serie} Siege in Folge</p>
+                        <p>Rekord: {rekord}</p>
+
+                        <div className="orden-leiste">
+                            {ORDEN.map((orden) => (
+                                <div key={orden.name} className={rekord >= orden.ab ? "orden erreicht" : "orden"}>
+                                    {/* ✏️ DEIN HTML 14: das Emoji (span className="orden-emoji") mit {orden.emoji},
+                                                        der Name (strong) mit {orden.name}
+                                                        und ein small mit "ab {orden.ab} Siegen" */}
+                                                        <span className="orden-emoji">{orden.emoji}</span>
+                                                        <strong>{orden.name}</strong>
+                                                        <small>ab {orden.ab} Siegen</small>
+                                                    
+
+                                </div>
+                            ))}
+                        </div>
+
+                        <button className="zufall-button" onClick={zufallsKampf} disabled={pokemon.length === 0}>
+                            {/* ✏️ DEIN HTML 15: Text "🎲 Zufalls-Pokémon" */}
+                            🎲 Zufalls-Pokémon
+                        </button>
+                    </section>
+
+                    {/* ===================== Die Arena ===================== */}
+                    {!spieler && (
+                        <div className="arena-leer">
+                            {/* ✏️ DEIN HTML 3: ein p mit "👇 Wähle unten ein Pokémon für den Kampf!" */}
+                            <p>👇 Wähle unten ein Pokémon für den Kampf!</p>
+                        </div>
+                    )}
+
+                    {spieler && gegner && (
+                        <section className="arena" ref={arena}>
+                            <Kaempfer pokemon={gegner} kp={kpGegner} seite="gegner" treffer={trefferGegner} />
+                            <Kaempfer pokemon={spieler} kp={kpSpieler} seite="spieler" treffer={trefferSpieler} />
+
+                            <div className="kampf-text">
+                                {meldungen.map((m, i) => (
+                                    <p key={runde + "-" + i} className={"meldung " + m.klasse}>
+                                        {/* ✏️ DEIN HTML 5: der Text {m.text} */}
+                                        {m.text}
+                                    </p>
+                                ))}
+                            </div>
+
+                            {!ergebnis && (
+                                <div className="attacken">
+                                    {spieler.attacken.map((attacke) => (
+                                        <button
+                                            key={attacke.name}
+                                            className={"attacke-button " + attacke.typ.klasse}
+                                            onClick={() => attackeEinsetzen(attacke)}
+                                        >
+                                            {/* ✏️ DEIN HTML 6: der Name {attacke.name}
+                                                               und der Typ in einem small: {attacke.typ.name} */}
+                                                               {attacke.name} {attacke.typ.name}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+
+                            {ergebnis && (
+                                <div className={"ergebnis " + ergebnis}>
+                                    {/* ✏️ DEIN HTML 7: eine h2 mit {ergebnisText} */}
+                                        <h2>{ergebnisText}</h2>
+
+                                    <div className="ergebnis-knoepfe">
+                                        <button className="neu-button" onClick={() => kampfStarten(spieler)}>
+                                            {/* ✏️ DEIN HTML 7: Text "⚔️ Neuer Kampf" */}
+                                            ⚔️ Neuer Kampf
+                                        </button>
+                                        <button className="wechsel-button" onClick={anderesPokemon}>
+                                            {/* ✏️ DEIN HTML 7: Text "🔄 Anderes Pokémon" */}
+                                            🔄 Anderes Pokémon
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </section>
+                    )}
+
+                    {/* ===================== ⭐⭐ TEIL 4: Kampf-Protokoll ===================== */}
+                    {spieler && protokoll.length > 0 && (
+                        <section className="protokoll">
+                            {/* ✏️ DEIN HTML 16: Überschrift (h2) "📜 Kampf-Protokoll" */}
+                            <h2>📜 Kampf-Protokoll</h2>
+                            <ol className="zuege">
+                                {protokoll.map((zug, i) => (
+                                    <li key={i} className={"zug " + zug.wer + " " + zug.klasse}>
+                                        {/* ✏️ DEIN HTML 16: die Runde in einem strong: Runde {zug.runde}:
+                                                            und dahinter der Text {zug.text} */}
+                                                            <strong>Runde {zug.runde}:</strong>
+                                                            <strong>Runde {zug.text}:</strong>
+                                    </li>
+                                ))}
+                            </ol>
+                        </section>
+                    )}
+
+                    {/* ===================== Pokémon auswählen ===================== */}
+                    <input
+                        className="suche"
+                        placeholder="Pokémon suchen (Name oder Nummer) ..."
+                        value={suche}
+                        onChange={(e) => setSuche(e.target.value)}
+                    />
+
+                    <nav className="filter-leiste">
+                        <button
+                            className={filter === "alle" ? "filter-button aktiv" : "filter-button"}
+                            onClick={() => setFilter("alle")}
+                        >
+                            Alle
+                        </button>
+                        {alleTypen.map((typ) => (
+                            <button
+                                key={typ.klasse}
+                                className={"filter-button " + typ.klasse + (filter === typ.klasse ? " aktiv" : "")}
+                                onClick={() => setFilter(typ.klasse)}
+                            >
+                                {typ.name}
+                            </button>
+                        ))}
+                    </nav>
+
+                    {pokemon.length === 0 && !fehler && <p className="laden">Pokémon werden geladen ... ⚔️</p>}
+                    {fehler && <p className="laden">😢 Die Pokémon konnten nicht geladen werden. Lade die Seite neu (F5).</p>}
+                    {pokemon.length > 0 && angezeigtePokemon.length === 0 && <p className="laden">Kein Pokémon gefunden 🔍</p>}
+
+                    <div className="karten">
+                        {angezeigtePokemon.map((p) => (
+                            <PokemonKarte
+                                key={p.id}
+                                pokemon={p}
+                                gewaehlt={spieler !== null && spieler.id === p.id}
+                                onKlick={() => kampfStarten(p)}
+                                onInfo={() => setInfoPokemon(p)}
+                            />
+                        ))}
+                    </div>
+
+                    {infoPokemon && (
+                        <PokemonDetails
+                            pokemon={infoPokemon}
+                            typen={typen}
+                            onKampf={() => kampfStarten(infoPokemon)}
+                            onSchliessen={() => setInfoPokemon(null)}
+                        />
+                    )}
+
+                    <footer>
+                        {/* ✏️ DEIN HTML 8: "Daten: PokéAPI" und "Gebaut von DEIN NAME" (je ein p) */}
+                        <p>Daten: PokéAPI</p>
+                        <p>Gebaut von Leon</p>
+                    </footer>
+
+                </div>
+            );
+        }
+
+        ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+
+    </script>
+</body>
+</html>

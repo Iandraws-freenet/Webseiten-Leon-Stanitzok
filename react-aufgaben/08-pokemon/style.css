@@ -1,0 +1,694 @@
+/* =====================================================
+   TEIL A – FERTIG: Layout (bitte nicht verändern)
+   ===================================================== */
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background-attachment: fixed;
+}
+
+.seite {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 30px 16px;
+    text-align: center;
+}
+
+/* ---------- Team: 6 Plätze in einer Reihe ---------- */
+.team-box {
+    margin: 20px 0;
+}
+
+.team {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+}
+
+.team-pokemon,
+.leer-platz {
+    aspect-ratio: 1;
+    box-sizing: border-box;
+}
+
+.team-pokemon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    cursor: pointer;
+    animation: reinlegen 0.25s ease-out;
+}
+
+.team-pokemon img {
+    width: 75%;
+    height: auto;
+}
+
+.team-pokemon p {
+    margin: 0;
+    font-size: 12px;
+}
+
+@keyframes reinlegen {
+    from { transform: scale(0.3); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+}
+
+.team-info {
+    display: flex;
+    justify-content: center;
+    margin-top: 12px;
+}
+
+.team-info p {
+    margin: 0;
+}
+
+/* Box "Team komplett" hüpft */
+.team-komplett {
+    animation: huepfen 0.6s ease-out;
+}
+
+@keyframes huepfen {
+    0%   { transform: scale(0.5); }
+    60%  { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* ---------- Suche und Filter ---------- */
+.suche {
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+    margin-top: 10px;
+    outline: none;
+}
+
+.filter-leiste {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin: 15px 0 20px;
+}
+
+.filter-button {
+    min-height: 40px;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+
+.filter-button:hover {
+    transform: translateY(-2px);
+}
+
+/* ---------- Pokémon-Karten im Raster ---------- */
+.karten {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 16px;
+}
+
+.karte {
+    position: relative;
+    cursor: pointer;
+    min-height: 60px;
+    padding: 10px 8px 12px;
+    transition: transform 0.15s, opacity 0.2s;
+    
+}
+
+.karte:hover {
+    transform: translateY(-5px) scale(1.04);
+    .info-button { opacity: 1; }
+
+}
+
+.karte img {
+    width: 96px;
+    height: 96px;
+}
+
+.karte h3 {
+    margin: 0 0 6px;
+    font-size: 16px;
+}
+
+.karte .nummer {
+    display: block;
+    text-align: left;
+    font-size: 13px;
+}
+
+.typen {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+}
+
+.typ {
+    display: inline-block;
+    padding: 2px 10px;
+    font-size: 12px;
+}
+
+footer {
+    margin-top: 40px;
+}
+
+/* ---------- ⭐ Erweiterung: Info-Knopf oben rechts an der Karte ---------- */
+.info-button {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: none;
+    background: none;
+    font-size: 18px;
+    cursor: pointer;
+    transition: transform 0.15s;
+    opacity: 0;
+}
+
+.info-button:hover {
+    transform: scale(1.25);
+    
+}
+
+/* ---------- ⭐ Erweiterung: Detail-Box über der Seite ---------- */
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background-color: rgba(0, 0, 0, 0.75);
+    animation: einblenden 0.2s ease-out;
+}
+
+.details {
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+    text-align: center;
+    line-height: 1.5;
+    animation: reinfliegen 0.3s ease-out;
+}
+
+@keyframes einblenden {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes reinfliegen {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.schliessen {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 1;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background-color: #eeeeee;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.details .artwork {
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+}
+
+.details h2,
+.kategorie {
+    margin: 4px 0;
+}
+
+.masse {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.mass {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px;
+}
+
+/* Basiswerte: Name | Balken | Zahl */
+.basiswerte {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align: left;
+}
+
+.wert-zeile {
+    display: grid;
+    grid-template-columns: 150px 1fr 40px;
+    align-items: center;
+    gap: 10px;
+}
+
+.wert-name {
+    font-size: 14px;
+}
+
+.wert-zahl {
+    text-align: right;
+}
+
+.balken-platz {
+    height: 12px;
+    overflow: hidden;
+}
+
+.balken {
+    height: 100%;
+    transition: width 0.5s ease-out;
+}
+
+.link-leiste {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.link-button {
+    display: inline-block;
+    padding: 8px 14px;
+    text-decoration: none;
+    transition: transform 0.15s;
+}
+
+.link-button:hover {
+    transform: translateY(-2px);
+}
+
+.team-button {
+    width: 100%;
+    min-height: 48px;
+    margin-top: 15px;
+    cursor: pointer;
+}
+
+.team-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* ---------- ⭐⭐ Teil 4: Knöpfe unter dem Team ---------- */
+.team-knoepfe {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.zufall-button,
+.leeren-button,
+.weiter-button {
+    min-height: 44px;
+    padding: 8px 18px;
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+
+.zufall-button:hover:not(:disabled),
+.leeren-button:hover:not(:disabled),
+.weiter-button:hover {
+    transform: translateY(-2px);
+}
+
+.zufall-button:disabled,
+.leeren-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* ---------- ⭐⭐ Teil 4: Team-Analyse und Quiz ---------- */
+.analyse,
+.quiz {
+    margin: 0 0 20px;
+    animation: reinfliegen 0.3s ease-out;
+}
+
+.analyse h2,
+.quiz h2,
+.analyse p,
+.punkte {
+    margin: 0 0 8px;
+}
+@keyframes schweben { from { transform: translateY(0); } to { transform: translateY(-8px); } }
+.quiz-bild {
+    display: block;
+    width: 180px;
+    height: 180px;
+    margin: 10px auto;
+    object-fit: contain;
+    transition: filter 0.5s;
+    animation: schweben 2s ease-in-out infinite alternate;
+    
+}
+
+.antworten {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    max-width: 420px;
+    margin: 0 auto;
+}
+
+.antwort-button {
+    min-height: 44px;
+    padding: 8px;
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+
+.antwort-button:hover {
+    transform: translateY(-2px);
+}
+
+.quiz-ergebnis {
+    margin-top: 12px;
+    animation: reinfliegen 0.3s ease-out;
+}
+
+.quiz-ergebnis p {
+    margin: 0 0 8px;
+}
+
+/* ---------- Handy ---------- */
+@media (max-width: 600px) {
+    .team {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .karten {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .wert-zeile {
+        grid-template-columns: 110px 1fr 36px;
+    }
+
+    .wert-name {
+        font-size: 12px;
+    }
+}
+
+
+/* =====================================================
+   TEIL B – ✏️ DEIN CSS
+   ===================================================== */
+
+/* CSS 1 – Seite: Hintergrund, Schriftfarbe, Schriftart */
+body {background-color:#dc0a2d ;color:white
+
+}
+
+/* CSS 2 – Überschrift und Untertitel */
+h1 {color:#ffcb05; 
+    text-shadow: 3px 3px 0 #3d7dca;
+
+}
+
+.untertitel {
+
+}
+
+/* CSS 3 – Suchfeld und Filter-Buttons (der aktive extra) */
+.suche {
+  border:1px solid #ccc;
+  border-radius: 0;
+  padding:10px;
+
+}
+
+.filter-button {border: 2px;
+color: #eeeeee;
+
+}
+
+.filter-button.aktiv {background-color: #eeeeee;
+    color:#dc0a2d;
+
+
+}
+
+/* CSS 4 – Team-Box, Pokémon im Team und leere Plätze */
+.team-box {background-color: rgba(0, 0, 0, 0.2);
+    
+   
+
+}
+
+.team-pokemon { border-radius: 50%;border:1px solid;border-color: black;
+    background-color: white;
+
+}
+
+.leer-platz {border-radius: 50%;border:1px solid;border-color: black;
+    background-color: white;
+    opacity: 0.4;
+
+}
+
+/* CSS 5 – Pokémon-Karte */
+.karte {background-color: white;
+    color:black
+    
+
+}
+
+/* CSS 6 – Nummer und Bild in der Karte */
+.karte .nummer {color:gray;
+    
+
+}
+
+.karte img {image-rendering: pixelated;
+
+}
+
+/* CSS 7 – Typ-Abzeichen (alle gleich) */
+.typ {color: rgb(248, 247, 247);
+    border-radius: 20px;
+
+}
+
+/* CSS 8 – Typ-Farben (background-color) */
+.normal {background-color: rgb(226, 191, 145);
+
+}
+
+.feuer {background-color: #e76d08;
+
+}
+
+.wasser {background-color: rgb(70, 179, 241);
+
+}
+
+.pflanze {background-color: rgb(69, 219, 69);
+
+}
+
+.elektro {background-color: #ffcb05;
+
+}
+
+.eis {background-color: aqua;
+
+}
+
+.kampf {background-color: #e7914b;
+
+}
+
+.gift {background-color: rgb(161, 63, 161);
+
+}
+
+.boden {background-color: #572f0e;
+
+}
+
+.flug {background-color: rgb(92, 128, 116);
+
+}
+
+.psycho {background-color: rgb(221, 93, 115);
+
+}
+
+.kaefer {background-color: rgb(160, 204, 94);
+
+}
+
+.gestein {background-color: rgb(99, 91, 91);
+
+}
+
+.geist {background-color: rgb(71, 2, 71);
+
+}
+
+.drache {background-color: rgb(39, 95, 105);
+
+}
+
+.stahl {background-color: rgb(172, 189, 188);
+
+}
+
+.fee {background-color: pink;
+
+}
+
+/* CSS 9 – Pokémon im Team, "Team komplett"-Box und Fußzeile */
+.im-team {opacity: 0.4;
+    
+
+}
+
+.team-komplett {background-color: yellow;
+
+}
+
+footer {
+
+}
+
+
+/* =====================================================
+   TEIL C – ⭐ ERWEITERUNG: DEIN CSS
+   ===================================================== */
+
+/* CSS 10 – Info-Box, Kategorie und Pokédex-Text */
+.details {background-color: white;color:black;
+ border: 6px solid #dc0a2d;
+}
+
+.kategorie {background-color: gray;
+
+}
+
+.pokedex-text {background-color: #acda2f;
+
+}
+
+/* CSS 11 – Größe und Gewicht */
+.mass {color:#f2f2f2; strong;
+
+}
+
+.mass strong {
+
+}
+
+/* CSS 12 – Basiswerte: Balken-Hintergrund und Balken */
+.balken-platz {background-color: gray;
+
+}
+
+.balken {background-color: #4caf50;
+
+}
+
+/* CSS 13 – Link-Buttons und Button "Ins Team" */
+.link-button {background-color: #3d7dca;
+    color: white;
+
+}
+
+.link-button:hover {background-color: darkblue;
+
+}
+
+.team-button {background-color: #dc0a2d;color: #f5f5f5;
+
+}
+
+
+/* =====================================================
+   TEIL D – ⭐⭐ TEIL 4: DEIN CSS
+   ===================================================== */
+
+/* CSS 14 – Knöpfe "Zufalls-Team" und "Team leeren" */
+.zufall-button {background-color: yellow;color: darkblue;
+
+}
+
+.leeren-button {background-color: white;color: red;
+
+}
+
+/* CSS 15 – Analyse-Box und Team-Stärke */
+.analyse {background-color: white;color: black;
+
+}
+
+.staerke {
+
+}
+
+/* CSS 16 – Quiz-Box und Punkte */
+.quiz {background-color:#3d7dca ;
+    border-color: #ffcb05;
+    border: 2px;
+}
+
+.punkte {
+
+}
+
+/* CSS 17 – Das versteckte Pokémon (Schattenriss!) */
+.quiz-bild.versteckt {filter: brightness(0) invert(1);
+
+}
+
+/* CSS 18 – Antwort-Buttons: normal, richtig und falsch */
+.antwort-button {background-color: white;color: black;
+
+}
+
+.antwort-button.richtig {background-color: #acda2f;
+    animation: huepfen 0.6s ease-out;
+
+}
+
+.antwort-button.falsch {background-color: #dc0a2d;
+
+}
+
+/* CSS 19 – Button "Nächstes Pokémon" */
+.weiter-button {background-color: yellow;color: darkblue;
+
+}

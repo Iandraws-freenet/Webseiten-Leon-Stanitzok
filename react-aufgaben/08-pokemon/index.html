@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mein Pokédex</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- React und Babel aus dem Internet laden (nicht verändern) -->
+    <script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.26.4/babel.min.js"></script>
+
+    <!-- Gespeicherte Pokémon-Daten (erzeugt mit: node daten-aktualisieren.js pokemon) -->
+    <script src="daten.js"></script>
+</head>
+<body>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+
+        const { useState, useEffect } = React;
+
+        const TEAM_GROESSE = 6;
+
+        // Bilder über jsDelivr (nicht direkt von GitHub, dort gibt es ein Limit)
+        const SPRITE_URL = "https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/";
+        const ARTWORK_URL = "https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/other/official-artwork/";
+
+        // Die ersten 151 Pokémon mit EINER Abfrage (language_id 6 = Deutsch)
+        const POKEMON_ABFRAGE = `query {
+            pokemonspecies(limit: 151, order_by: {id: asc}) {
+                id
+                name
+                pokemonspeciesnames(where: {language_id: {_eq: 6}}) { name genus }
+                pokemonspeciesflavortexts(where: {language_id: {_eq: 6}}, limit: 1, order_by: {version_id: desc}) { flavor_text }
+                pokemons(where: {is_default: {_eq: true}}) {
+                    height
+                    weight
+                    pokemontypes(order_by: {slot: asc}) { type { name typenames(where: {language_id: {_eq: 6}}) { name } } }
+                    pokemonstats(order_by: {stat_id: asc}) { base_stat stat { name } }
+                }
+            }
+        }`;
+
+        // Daten holen: zuerst aus daten.js (gespeichert), sonst aus dem Zwischenspeicher, sonst aus dem Internet.
+        // Die PokéAPI erlaubt nur 100 Abfragen pro Stunde. Mit daten.js fragen wir gar nicht erst.
+        function holePokemon() {
+            if (window.GESPEICHERTE_DATEN && window.GESPEICHERTE_DATEN["pokemon-151"]) {
+                return Promise.resolve(window.GESPEICHERTE_DATEN["pokemon-151"]);
+            }
+            try {
+                const gespeichert = sessionStorage.getItem("pokemon-151");
+                if (gespeichert) return Promise.resolve(JSON.parse(gespeichert));
+            } catch (e) { /* ohne Zwischenspeicher weiterarbeiten */ }
+            return fetch("https://graphql.pokeapi.co/v1beta2", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ query: POKEMON_ABFRAGE })
+            })
+                .then((antwort) => {
+                    if (!antwort.ok) throw new Error("HTTP " + antwort.status);
+                    return antwort.json();
+                })
+                .then((daten) => {
+                    try { sessionStorage.setItem("pokemon-151", JSON.stringify(daten)); } catch (e) { }
+                    return daten;
+                });
+        }
+
+        // Typen: CSS-Klasse auf Deutsch (ohne Umlaute)
+        const TYP_KLASSE = {
+            normal: "normal", fire: "feuer", water: "wasser", grass: "pflanze", electric: "elektro",
+            ice: "eis", fighting: "kampf", poison: "gift", ground: "boden", flying: "flug",
+            psychic: "psycho", bug: "kaefer", rock: "gestein", ghost: "geist", dragon: "drache",
+            dark: "unlicht", steel: "stahl", fairy: "fee"
+        };
+
+        const WERT_DEUTSCH = {
+            "hp": "KP",
+            "attack": "Angriff",
+            "defense": "Verteidigung",
+            "special-attack": "Spezial-Angriff",
+            "special-defense": "Spezial-Verteidigung",
+            "speed": "Initiative"
+        };
+
+        // Die Antwort der API in einfache Pokémon umwandeln
+        function umwandeln(antwort) {
+            return antwort.data.pokemonspecies.map((p) => {
+                const deutsch = p.pokemonspeciesnames[0] || {};
+                const form = p.pokemons[0];
+                const text = p.pokemonspeciesflavortexts[0] ? p.pokemonspeciesflavortexts[0].flavor_text : "";
+                const werte = form.pokemonstats.map((s) => ({ name: WERT_DEUTSCH[s.stat.name] || s.stat.name, wert: s.base_stat }));
+                return {
+                    id: p.id,
+                    nummer: "#" + String(p.id).padStart(3, "0"),
+                    name: deutsch.name || p.name,
+                    kategorie: deutsch.genus || "",
+                    text: text.replace(/\s+/g, " "),
+                    groesse: (form.height / 10).toLocaleString("de-DE"),
+                    gewicht: (form.weight / 10).toLocaleString("de-DE"),
+                    typen: form.pokemontypes.map((t) => ({
+                        name: t.type.typenames[0] ? t.type.typenames[0].name : t.type.name,
+                        klasse: TYP_KLASSE[t.type.name] || t.type.name
+                    })),
+                    werte: werte,
+                    summe: werte.reduce((summe, w) => summe + w.wert, 0)
+                };
+            });
+        }
+
+        function mischen(liste) {
+            const kopie = [...liste];
+            for (let i = kopie.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [kopie[i], kopie[j]] = [kopie[j], kopie[i]];
+            }
+            return kopie;
+        }
+
+
+        // =====================================================
+        // Eine Pokémon-Karte im Pokédex
+        // =====================================================
+        function PokemonKarte({ pokemon, imTeam, onKlick, onInfo }) {
+            const bild = SPRITE_URL + pokemon.id + ".png";
+
+            return (
+                <div className={imTeam ? "karte im-team" : "karte"} onClick={onKlick}>
+
+                    {/* ✏️ DEIN HTML 2: Nummer (span className="nummer") mit {pokemon.nummer},
+                                       Bild (img) mit src={bild} und Name (h3) mit {pokemon.name} */}
+                    <span className="nummer">{pokemon.nummer}</span>
+                    <img src={bild} alt={pokemon.name}></img>
+                    <h3>{pokemon.name}</h3>
+
+                    <div className="typen">
+                        {pokemon.typen.map((typ) => (
+                            <span key={typ.klasse} className={"typ " + typ.klasse}>
+                                {/* ✏️ DEIN HTML 2: der Name vom Typ {typ.name} */}
+                                {typ.name}
+                            </span>
+                        ))}
+                    </div>
+
+                    {/* ⭐ Erweiterung: Info-Knopf (fertig) */}
+                    <button
+                        className="info-button"
+                        title="Mehr Infos"
+                        onClick={(e) => {
+                            e.stopPropagation();   // Info-Klick legt das Pokémon NICHT ins Team
+                            onInfo();
+                        }}
+                    >
+                        ℹ️
+                    </button>
+                </div>
+            );
+        }
+
+
+        // =====================================================
+        // Ein Pokémon oben im Team
+        // =====================================================
+        function TeamPokemon({ pokemon, onKlick }) {
+            const bild = SPRITE_URL + pokemon.id + ".png";
+
+            return (
+                <div className="team-pokemon" onClick={onKlick}>
+
+                    {/* ✏️ DEIN HTML 3: Bild (img) und Name (p) */}
+                    <p>{pokemon.name}</p>
+                    <img  src={bild}alt={pokemon.name}/>
+                </div>
+            );
+        }
+
+
+        // =====================================================
+        // ⭐ ERWEITERUNG: Infos zu einem Pokémon (Klick auf ℹ️)
+        // =====================================================
+        function PokemonDetails({ pokemon, imTeam, teamVoll, onTeam, onSchliessen }) {
+            const artwork = ARTWORK_URL + pokemon.id + ".png";
+
+            // Fertig: Links ins Internet
+            const pokewiki = "https://www.pokewiki.de/" + encodeURIComponent(pokemon.name);
+            const youtube = "https://www.youtube.com/results?search_query=" + encodeURIComponent("Pokémon " + pokemon.name);
+
+            let teamText = "➕ Ins Team";
+            if (imTeam) teamText = "➖ Aus dem Team";
+            else if (teamVoll) teamText = "Team ist voll";
+
+            return (
+                <div className="overlay" onClick={onSchliessen}>
+                    <div className="details" onClick={(e) => e.stopPropagation()}>
+                        <button className="schliessen" onClick={onSchliessen}>✕</button>
+
+                        {/* ✏️ DEIN HTML 7: großes Bild (img className="artwork") mit src={artwork},
+                                           Nummer und Name in einer h2 ({pokemon.nummer} {pokemon.name})
+                                           und die Kategorie (p className="kategorie") mit {pokemon.kategorie} */}
+                        <img className="artwork" src={artwork} alt={pokemon.name} />
+                        <h2>{pokemon.nummer} {pokemon.name}</h2>
+                        <p className="kategorie">{pokemon.kategorie}</p>
+                
+                        
+
+                        <div className="typen">
+                            {pokemon.typen.map((typ) => (
+                                <span key={typ.klasse} className={"typ " + typ.klasse}>
+                                    {/* ✏️ DEIN HTML 7: der Name vom Typ {typ.name} */}
+                                    {typ.name}
+                                </span>
+                            ))}
+                        </div>
+
+                        {/* ✏️ DEIN HTML 8: der Pokédex-Text (p className="pokedex-text") mit {pokemon.text} */}
+                        <p className="pokedex-text">{pokemon.text}</p>
+
+                        <div className="masse">
+                            {/* ✏️ DEIN HTML 8: zwei Kästchen (div className="mass"), in jedem ein Titel (span) und ein Wert (strong):
+                                               📏 Größe {pokemon.groesse} m  und  ⚖️ Gewicht {pokemon.gewicht} kg */}
+                            <span>{pokemon.groesse} m groß und {pokemon.gewicht} kg schwer</span>
+                        </div>
+
+                        <div className="basiswerte">
+                            {pokemon.werte.map((w) => (
+                                <div key={w.name} className="wert-zeile">
+                                    <span className="wert-name">
+                                        {/* ✏️ DEIN HTML 9: der Name vom Wert {w.name} */}
+                                        {w.name}
+                                    </span>
+                                    <div className="balken-platz">
+                                        <div className="balken" style={{ width: Math.min(100, (w.wert / 160) * 100) + "%" }}></div>
+                                    </div>
+                                    <strong className="wert-zahl">
+                                        {/* ✏️ DEIN HTML 9: die Zahl {w.wert} */}
+                                        {w.wert}
+                                    </strong>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="link-leiste">
+                            {/* ✏️ DEIN HTML 10: zwei Links (a className="link-button" target="_blank"):
+                                                📖 PokéWiki mit {pokewiki} und ▶️ YouTube mit {youtube} */}
+                            <a className="link-button" href ={pokewiki} target="_blank">pokewiki </a> 
+                            <a className="link-button" href ={youtube} target="_blank">youtube </a> 
+                        </div>
+
+                        <button className="team-button" onClick={onTeam} disabled={teamVoll && !imTeam}>
+                            {teamText}
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+
+        // =====================================================
+        // Die App (JavaScript ist fertig)
+        // =====================================================
+        function App() {
+            const [pokemon, setPokemon] = useState([]);
+            const [suche, setSuche] = useState("");
+            const [filter, setFilter] = useState("alle");
+            const [team, setTeam] = useState([]);
+            const [fehler, setFehler] = useState(false);
+            const [infoPokemon, setInfoPokemon] = useState(null);   // ⭐ Pokémon mit offener Info-Box
+
+            // ⭐⭐ Teil 4: Quiz
+            const [quiz, setQuiz] = useState(null);
+            const [punkte, setPunkte] = useState(0);
+            const [runden, setRunden] = useState(0);
+
+            useEffect(() => {
+                holePokemon()
+                    .then((daten) => setPokemon(umwandeln(daten)))
+                    .catch(() => setFehler(true));
+            }, []);
+
+            // Alle Typen, die es gibt (für die Filter-Buttons)
+            const alleTypen = [];
+            pokemon.forEach((p) => p.typen.forEach((typ) => {
+                if (!alleTypen.some((t) => t.klasse === typ.klasse)) alleTypen.push(typ);
+            }));
+
+            function pokemonUmschalten(p) {
+                if (team.some((t) => t.id === p.id)) {
+                    setTeam(team.filter((t) => t.id !== p.id));
+                } else if (team.length < TEAM_GROESSE) {
+                    setTeam([...team, p]);
+                }
+            }
+
+            const angezeigtePokemon = pokemon
+                .filter((p) => filter === "alle" || p.typen.some((t) => t.klasse === filter))
+                .filter((p) => p.name.toLowerCase().includes(suche.toLowerCase()) || String(p.id) === suche.trim());
+
+            const anzahlImTeam = team.length;
+            const leerePlaetze = TEAM_GROESSE - anzahlImTeam;
+
+            // ⭐⭐ TEIL 4 (fertig): Zufalls-Team und Team leeren
+            function zufallsTeam() {
+                setTeam(mischen(pokemon).slice(0, TEAM_GROESSE));
+            }
+
+            function teamLeeren() {
+                setTeam([]);
+            }
+
+            // ⭐⭐ TEIL 4 (fertig): Team-Analyse
+            const teamStaerke = team.reduce((summe, p) => summe + p.summe, 0);
+            const staerkstes = team.reduce((bester, p) => (bester === null || p.summe > bester.summe ? p : bester), null);
+            const typenImTeam = [];
+            team.forEach((p) => p.typen.forEach((typ) => {
+                if (!typenImTeam.some((t) => t.klasse === typ.klasse)) typenImTeam.push(typ);
+            }));
+            const anzahlTypen = typenImTeam.length;
+
+            // ⭐⭐ TEIL 4 (fertig): Quiz "Wer ist das Pokémon?"
+            function neueQuizRunde() {
+                const auswahl = mischen(pokemon).slice(0, 4);
+                setQuiz({ gesucht: auswahl[0], antworten: mischen(auswahl), gewaehlt: null });
+            }
+
+            useEffect(() => {
+                if (pokemon.length > 0 && quiz === null) neueQuizRunde();
+            }, [pokemon]);
+
+            function quizAntworten(p) {
+                if (quiz.gewaehlt) return;   // nur eine Antwort pro Runde
+                setQuiz({ ...quiz, gewaehlt: p });
+                setRunden(runden + 1);
+                if (p.id === quiz.gesucht.id) setPunkte(punkte + 1);
+            }
+
+            function antwortKlasse(p) {
+                if (!quiz.gewaehlt) return "antwort-button";
+                if (p.id === quiz.gesucht.id) return "antwort-button richtig";
+                if (p.id === quiz.gewaehlt.id) return "antwort-button falsch";
+                return "antwort-button";
+            }
+
+            let ergebnisText = "";
+            if (quiz && quiz.gewaehlt) {
+                ergebnisText = quiz.gewaehlt.id === quiz.gesucht.id
+                    ? "🎉 Richtig! Es ist " + quiz.gesucht.name + "!"
+                    : "😅 Leider falsch! Es ist " + quiz.gesucht.name + ".";
+            }
+
+            return (
+                <div className="seite">
+
+                    <header>
+                        {/* ✏️ DEIN HTML 1: Überschrift (h1) und Untertitel (p className="untertitel") */}
+                        <h1>Pokémon</h1>
+                        <p className="untertitel"></p>
+                    </header>
+
+                    <section className="team-box">
+                        <div className="team">
+                            {team.map((p) => (
+                                <TeamPokemon key={p.id} pokemon={p} onKlick={() => pokemonUmschalten(p)} />
+                            ))}
+                            {Array.from({ length: leerePlaetze }).map((_, i) => (
+                                <div key={"leer" + i} className="leer-platz"></div>
+                            ))}
+                        </div>
+
+                        <div className="team-info">
+                            {/* ✏️ DEIN HTML 4: ein p mit {anzahlImTeam} / 6 Pokémon */}
+                            <p>{anzahlImTeam}</p>
+                        </div>
+
+                        {/* ⭐⭐ TEIL 4: zwei Knöpfe (das JavaScript ist fertig) */}
+                        <div className="team-knoepfe">
+                            <button className="zufall-button" onClick={zufallsTeam} disabled={pokemon.length === 0}>
+                                {/* ✏️ DEIN HTML 11: Text "🎲 Zufalls-Team" */}
+                                🎲 Zufalls-Team
+                            </button>
+                            <button className="leeren-button" onClick={teamLeeren} disabled={anzahlImTeam === 0}>
+                                {/* ✏️ DEIN HTML 11: Text "🗑️ Team leeren" */}
+                                🗑️ Team leeren
+                            </button>
+                        </div>
+                    </section>
+
+                    {anzahlImTeam === TEAM_GROESSE && (
+                        <div className="team-komplett">
+                            {/* ✏️ DEIN HTML 5: "🎉 Dein Team ist komplett!" */}
+                            🎉 Dein Team ist komplett!
+                        </div>
+                    )}
+
+                    {/* ===================== ⭐⭐ TEIL 4: Team-Analyse ===================== */}
+                    {anzahlImTeam > 0 && (
+                        <section className="analyse">
+                            {/* ✏️ DEIN HTML 12: Überschrift (h2) "📊 Team-Analyse",
+                                                ein p (className="staerke") mit "💪 Team-Stärke: {teamStaerke}"
+                                                und ein p mit "⭐ Stärkstes Pokémon: {staerkstes.name}" */}
+                            <h2>📊 Team-Analyse</h2>
+                            <p className="staerke">💪 Team-Stärke: {teamStaerke}</p>
+                            <p>⭐ Stärkstes Pokémon: {staerkstes.name}</p>
+
+                            {/* ✏️ DEIN HTML 13: ein p mit "Typen im Team: {anzahlTypen} von 18" */}
+                            <p>Typen im Team: {anzahlTypen} von 18</p>
+                            <div className="typen">
+                                {typenImTeam.map((typ) => (
+                                    <span key={typ.klasse} className={"typ " + typ.klasse}>
+                                        {/* ✏️ DEIN HTML 13: der Name vom Typ {typ.name} */}
+                                        {typ.name}
+                                    </span>
+                                ))}
+                            </div>
+                        </section>
+                    )}
+
+                    {/* ===================== ⭐⭐ TEIL 4: Quiz ===================== */}
+                    {quiz && (
+                        <section className="quiz">
+                            {/* ✏️ DEIN HTML 14: Überschrift (h2) "❓ Wer ist das Pokémon?"
+                                                und ein p (className="punkte") mit "Punkte: {punkte} / {runden}" */}
+                            <h2>❓ Wer ist das Pokémon?</h2>
+
+                            <img
+                                className={quiz.gewaehlt ? "quiz-bild" : "quiz-bild versteckt"}
+                                src={ARTWORK_URL + quiz.gesucht.id + ".png"}
+                                alt="Wer ist das?"
+                            />
+
+                            <div className="antworten">
+                                {quiz.antworten.map((p) => (
+                                    <button key={p.id} className={antwortKlasse(p)} onClick={() => quizAntworten(p)}>
+                                        {/* ✏️ DEIN HTML 15: der Name {p.name} */}
+                                        {p.name}
+                                    </button>
+                                ))}
+                            </div>
+
+                            {quiz.gewaehlt && (
+                                <div className="quiz-ergebnis">
+                                    {/* ✏️ DEIN HTML 16: ein p mit {ergebnisText} */}
+                                    <p>{ergebnisText}</p>
+                                    <button className="weiter-button" onClick={neueQuizRunde}>
+                                        {/* ✏️ DEIN HTML 16: Text "➡️ Nächstes Pokémon" */}
+                                        ➡️ Nächstes Pokémon
+                                    </button>
+                                </div>
+                            )}
+                        </section>
+                    )}
+
+                    <input
+                        className="suche"
+                        placeholder="Pokémon suchen (Name oder Nummer) ..."
+                        value={suche}
+                        onChange={(e) => setSuche(e.target.value)}
+                    />
+
+                    <nav className="filter-leiste">
+                        <button
+                            className={filter === "alle" ? "filter-button aktiv" : "filter-button"}
+                            onClick={() => setFilter("alle")}
+                        >
+                            Alle
+                        </button>
+                        {alleTypen.map((typ) => (
+                            <button
+                                key={typ.klasse}
+                                className={"filter-button " + typ.klasse + (filter === typ.klasse ? " aktiv" : "")}
+                                onClick={() => setFilter(typ.klasse)}
+                            >
+                                {typ.name}
+                            </button>
+                        ))}
+                    </nav>
+
+                    {pokemon.length === 0 && !fehler && <p className="laden">Pokémon werden geladen ... 🔴</p>}
+                    {fehler && <p className="laden">😢 Die Pokémon konnten nicht geladen werden. Lade die Seite neu (F5).</p>}
+                    {pokemon.length > 0 && angezeigtePokemon.length === 0 && <p className="laden">Kein Pokémon gefunden 🔍</p>}
+
+                    <div className="karten">
+                        {angezeigtePokemon.map((p) => (
+                            <PokemonKarte
+                                key={p.id}
+                                pokemon={p}
+                                imTeam={team.some((t) => t.id === p.id)}
+                                onKlick={() => pokemonUmschalten(p)}
+                                onInfo={() => setInfoPokemon(p)}
+                            />
+                        ))}
+                    </div>
+
+                    {infoPokemon && (
+                        <PokemonDetails
+                            pokemon={infoPokemon}
+                            imTeam={team.some((t) => t.id === infoPokemon.id)}
+                            teamVoll={anzahlImTeam === TEAM_GROESSE}
+                            onTeam={() => pokemonUmschalten(infoPokemon)}
+                            onSchliessen={() => setInfoPokemon(null)}
+                        />
+                    )}
+
+                    <footer>
+                        {/* ✏️ DEIN HTML 6: "Daten: PokéAPI" und "Gebaut von DEIN NAME" (je ein p) */}
+                        <p>Daten: PokéAPI</p>
+                        <p>Gebaut von Leon</p>
+                    </footer>
+
+                </div>
+            );
+        }
+
+        ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+
+    </script>
+</body>
+</html>
