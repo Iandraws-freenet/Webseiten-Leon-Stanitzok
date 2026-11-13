@@ -5,30 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leons Webseiten</title>
     <meta name="description" content="Alle Webseiten und Apps, die Leon Stanitzok im Praktikum gebaut hat.">
-    <meta name="theme-color" content="#0c0e12">
+    <meta name="theme-color" content="#0d0f1e">
     <meta property="og:title" content="Die Webseiten von Leon">
     <meta property="og:description" content="11 Projekte aus dem Praktikum: von der ersten HTML-Seite bis zur React-App.">
     <meta property="og:image" content="https://iandraws-freenet.github.io/Webseiten-Leon-Stanitzok/vorschau/13-pokemon-kampf.webp">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2224%22 fill=%22%235bd16a%22/><text x=%2250%22 y=%2268%22 font-size=%2256%22 font-family=%22Arial%22 font-weight=%22700%22 text-anchor=%22middle%22 fill=%22%230c0e12%22>L</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2224%22 fill=%22%235bd16a%22/><text x=%2250%22 y=%2268%22 font-size=%2256%22 font-family=%22Arial%22 font-weight=%22700%22 text-anchor=%22middle%22 fill=%22%230d0f1e%22>L</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Russo+One&display=swap" rel="stylesheet">
     <style>
         :root {
             --akzent: #5bd16a;
             --akzent-weich: color-mix(in srgb, var(--akzent) 16%, transparent);
             --akzent-hell: color-mix(in srgb, var(--akzent) 60%, white);
-            --hintergrund: #0c0e12;
-            --flaeche: #14171d;
-            --flaeche2: #1b1f27;
-            --rand: #262b35;
-            --rand-hell: #343a47;
-            --text: #f1f3f7;
-            --text2: #a1a8b5;
-            --text3: #6f7684;
+            --hintergrund: #0d0f1e;
+            --flaeche: #161a2e;
+            --flaeche2: #1e2339;
+            --rand: #2a3050;
+            --rand-hell: #3b4268;
+            --text: #e8edf5;
+            --text2: #b8c1d3;
+            --text3: #94a3b8;
             --radius: 20px;
             --schatten: 0 1px 0 rgba(255,255,255,0.04) inset, 0 20px 40px -24px rgba(0,0,0,0.8);
-            --titel-font: "Bricolage Grotesque", system-ui, sans-serif;
+            --titel-font: "Russo One", "Chakra Petch", system-ui, sans-serif;
         }
 
         * { box-sizing: border-box; }
@@ -39,7 +39,7 @@
             margin: 0;
             background: var(--hintergrund);
             color: var(--text);
-            font: 16px/1.6 Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+            font: 16px/1.6 "Chakra Petch", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
             -webkit-font-smoothing: antialiased;
         }
 
@@ -84,7 +84,7 @@
             align-items: center;
             gap: 10px;
             font-family: var(--titel-font);
-            font-weight: 800;
+            font-weight: 400;
             font-size: 18px;
             text-decoration: none;
             white-space: nowrap;
@@ -185,7 +185,7 @@
             color: var(--hintergrund);
             font-family: var(--titel-font);
             font-size: 42px;
-            font-weight: 800;
+            font-weight: 400;
             box-shadow: 0 18px 50px -12px color-mix(in srgb, var(--akzent) 60%, transparent);
             transform: rotate(-4deg);
         }
@@ -215,10 +215,10 @@
             margin: 0 auto;
             max-width: 820px;
             font-family: var(--titel-font);
-            font-size: clamp(40px, 8vw, 80px);
-            font-weight: 800;
+            font-size: clamp(40px, 8vw, 78px);
+            font-weight: 400;
             line-height: 1.02;
-            letter-spacing: -0.03em;
+            letter-spacing: -0.01em;
         }
 
         h1 span {
@@ -309,7 +309,7 @@
 
         /* ---------- Abschnitte ---------- */
         .abschnitt { margin-top: 72px; }
-        .abschnitt:first-child { margin-top: 8px; }
+        .filter + .abschnitt { margin-top: 40px; }
 
         .abschnitt-kopf { margin-bottom: 24px; }
 
@@ -320,7 +320,8 @@
             margin: 0;
             font-family: var(--titel-font);
             font-size: clamp(28px, 4vw, 36px);
-            letter-spacing: -0.02em;
+            font-weight: 400;
+            letter-spacing: 0;
         }
 
         .anzahl {
@@ -328,7 +329,7 @@
             border-radius: 999px;
             background: var(--akzent-weich);
             color: var(--akzent);
-            font-family: Inter, sans-serif;
+            font-family: "Chakra Petch", sans-serif;
             font-size: 14px;
             font-weight: 600;
         }
@@ -420,13 +421,92 @@
             margin-bottom: 8px;
         }
 
-        .emoji { font-size: 22px; line-height: 1; }
+        .kat-icon {
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--akzent-weich);
+            color: var(--akzent);
+        }
+
+        /* ---------- Highlight-Karte (Portfolio-Grid: Bilder zuerst) ---------- */
+        .highlight-label {
+            align-self: flex-start;
+            margin-bottom: 10px;
+            padding: 3px 10px;
+            border-radius: 999px;
+            background: var(--akzent);
+            color: #0b0d10;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        @media (min-width: 900px) {
+            .karte.highlight {
+                grid-column: 1 / -1;
+                display: grid;
+                grid-template-columns: 1.5fr 1fr;
+                align-items: stretch;
+            }
+            .karte.highlight .vorschau { margin: 12px 0 12px 12px; }
+            .karte.highlight .karte-text { justify-content: center; padding: 32px 36px; }
+            .karte.highlight h3 { font-size: 30px; }
+            .karte.highlight p { flex: 0; font-size: 17px; margin-bottom: 26px; }
+            .karte.highlight .kat-icon { width: 44px; height: 44px; }
+        }
+
+        /* ---------- Filter nach Kategorie ---------- */
+        .filter {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin: 8px 0 0;
+        }
+
+        .filter button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 44px;
+            padding: 8px 16px;
+            border: 1px solid var(--rand-hell);
+            border-radius: 999px;
+            background: var(--flaeche);
+            color: var(--text2);
+            font: 600 15px/1 "Chakra Petch", system-ui, sans-serif;
+            cursor: pointer;
+            transition: color 0.18s, background 0.18s, border-color 0.18s;
+        }
+
+        .filter button:hover { color: var(--text); border-color: var(--text3); }
+
+        .filter button[aria-pressed="true"] {
+            background: var(--akzent);
+            border-color: var(--akzent);
+            color: #0b0d10;
+        }
+
+        .filter button span {
+            padding: 2px 7px;
+            border-radius: 999px;
+            background: color-mix(in srgb, currentColor 16%, transparent);
+            font-size: 12px;
+        }
+
+        .abschnitt[hidden] { display: none; }
 
         .karte h3 {
             margin: 0;
             font-family: var(--titel-font);
-            font-size: 20px;
-            letter-spacing: -0.01em;
+            font-size: 19px;
+            font-weight: 400;
+            letter-spacing: 0;
         }
 
         .chip {
@@ -490,8 +570,9 @@
         /* ---------- Einblenden beim Scrollen ---------- */
         .js .einblenden {
             opacity: 0;
-            transform: translateY(16px);
-            transition: opacity 0.6s ease, transform 0.6s cubic-bezier(.2,.7,.3,1);
+            transform: translateY(16px) scale(0.96);
+            transition: opacity 0.4s ease, transform 0.4s cubic-bezier(.34,1.4,.64,1);
+            transition-delay: calc(min(var(--i, 0), 5) * 60ms);
         }
 
         .js .einblenden.sichtbar { opacity: 1; transform: none; }
@@ -553,21 +634,28 @@
     </header>
 
     <main class="huelle">
+        <div class="filter" role="group" aria-label="Projekte filtern">
+            <button type="button" data-filter="alle" aria-pressed="true">Alle <span>11</span></button>
+            <button type="button" data-filter="react" aria-pressed="false">React-Apps <span>5</span></button>
+            <button type="button" data-filter="html-css" aria-pressed="false">HTML & CSS <span>5</span></button>
+            <button type="button" data-filter="javascript" aria-pressed="false">JavaScript <span>1</span></button>
+        </div>
 
-        <section id="react" class="abschnitt">
+        <section id="react" class="abschnitt" data-kategorie="react">
             <div class="abschnitt-kopf">
                 <h2>React-Apps <span class="anzahl">5</span></h2>
                 <p>Interaktive Apps mit echten Daten aus dem Internet</p>
             </div>
             <div class="karten karten-gross">
-                <article class="karte gross">
+                <article class="karte highlight" style="--i:0">
                     <a class="vorschau" href="react-aufgaben/13-pokemon-kampf/" aria-label="Pokémon-Kampf öffnen">
                         <span class="browser-leiste" aria-hidden="true"><i></i><i></i><i></i><span>react-aufgaben/13-pokemon-kampf</span></span>
-                        <img src="vorschau/13-pokemon-kampf.webp" alt="Vorschau: Pokémon-Kampf" width="800" height="500" loading="lazy" decoding="async">
+                        <img src="vorschau/13-pokemon-kampf.webp" alt="Vorschau: Pokémon-Kampf" width="800" height="500" fetchpriority="high" decoding="async">
                     </a>
                     <div class="karte-text">
+                        <span class="highlight-label">★ Highlight</span>
                         <div class="karte-titel">
-                            <span class="emoji" aria-hidden="true">⚔️</span>
+                            <span class="kat-icon" title="React"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/></g><circle cx="12" cy="12" r="1.8" fill="currentColor"/></svg></span>
                             <h3>Pokémon-Kampf</h3>
                         </div>
                         <p>Kampf-Arena: Pokémon auswählen, gegeneinander antreten und Orden sammeln.</p>
@@ -577,14 +665,15 @@
                         </div>
                     </div>
                 </article>
-                <article class="karte gross">
+                <article class="karte" style="--i:1">
                     <a class="vorschau" href="react-aufgaben/06-minecraft-werkbank/" aria-label="Minecraft-Werkbank öffnen">
                         <span class="browser-leiste" aria-hidden="true"><i></i><i></i><i></i><span>react-aufgaben/06-minecraft-werkbank</span></span>
                         <img src="vorschau/06-minecraft-werkbank.webp" alt="Vorschau: Minecraft-Werkbank" width="800" height="500" loading="lazy" decoding="async">
                     </a>
                     <div class="karte-text">
+                        
                         <div class="karte-titel">
-                            <span class="emoji" aria-hidden="true">🛠️</span>
+                            <span class="kat-icon" title="React"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/></g><circle cx="12" cy="12" r="1.8" fill="currentColor"/></svg></span>
                             <h3>Minecraft-Werkbank</h3>
                         </div>
                         <p>Eine Werkbank wie im Spiel: Zutaten ins Raster legen und Rezepte erraten.</p>
@@ -594,14 +683,15 @@
                         </div>
                     </div>
                 </article>
-                <article class="karte gross">
+                <article class="karte" style="--i:2">
                     <a class="vorschau" href="react-aufgaben/08-pokemon/" aria-label="Pokémon öffnen">
                         <span class="browser-leiste" aria-hidden="true"><i></i><i></i><i></i><span>react-aufgaben/08-pokemon</span></span>
                         <img src="vorschau/08-pokemon.webp" alt="Vorschau: Pokémon" width="800" height="500" loading="lazy" decoding="async">
                     </a>
                     <div class="karte-text">
+                        
                         <div class="karte-titel">
-                            <span class="emoji" aria-hidden="true">🔴</span>
+                            <span class="kat-icon" title="React"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/></g><circle cx="12" cy="12" r="1.8" fill="currentColor"/></svg></span>
                             <h3>Pokémon</h3>
                         </div>
                         <p>Pokédex mit Team-Builder, Typ-Filter und dem Quiz „Wer ist das Pokémon?“.</p>
@@ -611,14 +701,15 @@
                         </div>
                     </div>
                 </article>
-                <article class="karte gross">
+                <article class="karte" style="--i:3">
                     <a class="vorschau" href="react-aufgaben/05-minecraft/" aria-label="Minecraft öffnen">
                         <span class="browser-leiste" aria-hidden="true"><i></i><i></i><i></i><span>react-aufgaben/05-minecraft</span></span>
                         <img src="vorschau/05-minecraft.webp" alt="Vorschau: Minecraft" width="800" height="500" loading="lazy" decoding="async">
                     </a>
                     <div class="karte-text">
+                        
                         <div class="karte-titel">
-                            <span class="emoji" aria-hidden="true">⛏️</span>
+                            <span class="kat-icon" title="React"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/></g><circle cx="12" cy="12" r="1.8" fill="currentColor"/></svg></span>
                             <h3>Minecraft</h3>
                         </div>
                         <p>Hotbar-Builder mit Blöcken und Werkzeugen aus Minecraft.</p>
@@ -628,14 +719,15 @@
                         </div>
                     </div>
                 </article>
-                <article class="karte gross">
+                <article class="karte" style="--i:4">
                     <a class="vorschau" href="react-aufgaben/04-clash-royale/" aria-label="Clash Royale öffnen">
                         <span class="browser-leiste" aria-hidden="true"><i></i><i></i><i></i><span>react-aufgaben/04-clash-royale</span></span>
                         <img src="vorschau/04-clash-royale.webp" alt="Vorschau: Clash Royale" width="800" height="500" loading="lazy" decoding="async">
                     </a>
                     <div class="karte-text">
+                        
                         <div class="karte-titel">
-                            <span class="emoji" aria-hidden="true">👑</span>
+                            <span class="kat-icon" title="React"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/></g><circle cx="12" cy="12" r="1.8" fill="currentColor"/></svg></span>
                             <h3>Clash Royale</h3>
                         </div>
                         <p>Deck-Builder: acht Karten wählen und die Elixierkosten im Blick behalten.</p>
@@ -648,20 +740,21 @@
             </div>
         </section>
 
-        <section id="html-css" class="abschnitt">
+        <section id="html-css" class="abschnitt" data-kategorie="html-css">
             <div class="abschnitt-kopf">
                 <h2>HTML & CSS <span class="anzahl">5</span></h2>
                 <p>Die ersten Schritte: Struktur und Gestaltung</p>
             </div>
             <div class="karten">
-                <article class="karte">
+                <article class="karte" style="--i:0">
                     <a class="vorschau" href="01-erste-webseite/" aria-label="Meine erste Webseite öffnen">
                         <span class="browser-leiste" aria-hidden="true"><i></i><i></i><i></i><span>01-erste-webseite</span></span>
                         <img src="vorschau/01-erste-webseite.webp" alt="Vorschau: Meine erste Webseite" width="800" height="500" loading="lazy" decoding="async">
                     </a>
                     <div class="karte-text">
+                        
                         <div class="karte-titel">
-                            <span class="emoji" aria-hidden="true">👋</span>
+                            <span class="kat-icon" title="HTML & CSS"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M3 9h18M10 13l-2 2 2 2M14 13l2 2-2 2"/></g></svg></span>
                             <h3>Meine erste Webseite</h3>
                         </div>
                         <p>Die allererste eigene Seite: ein Steckbrief in HTML.</p>
@@ -671,14 +764,15 @@
                         </div>
                     </div>
                 </article>
-                <article class="karte">
+                <article class="karte" style="--i:1">
                     <a class="vorschau" href="02-listen-und-links/" aria-label="Listen und Links öffnen">
                         <span class="browser-leiste" aria-hidden="true"><i></i><i></i><i></i><span>02-listen-und-links</span></span>
                         <img src="vorschau/02-listen-und-links.webp" alt="Vorschau: Listen und Links" width="800" height="500" loading="lazy" decoding="async">
                     </a>
                     <div class="karte-text">
+                        
                         <div class="karte-titel">
-                            <span class="emoji" aria-hidden="true">🔗</span>
+                            <span class="kat-icon" title="HTML & CSS"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M3 9h18M10 13l-2 2 2 2M14 13l2 2-2 2"/></g></svg></span>
                             <h3>Listen und Links</h3>
                         </div>
                         <p>Lieblingsdinge als Listen und nützliche Links.</p>
@@ -688,14 +782,15 @@
                         </div>
                     </div>
                 </article>
-                <article class="karte">
+                <article class="karte" style="--i:2">
                     <a class="vorschau" href="03-bilder-und-tabellen/" aria-label="Bilder und Tabellen öffnen">
                         <span class="browser-leiste" aria-hidden="true"><i></i><i></i><i></i><span>03-bilder-und-tabellen</span></span>
                         <img src="vorschau/03-bilder-und-tabellen.webp" alt="Vorschau: Bilder und Tabellen" width="800" height="500" loading="lazy" decoding="async">
                     </a>
                     <div class="karte-text">
+                        
                         <div class="karte-titel">
-                            <span class="emoji" aria-hidden="true">🖼️</span>
+                            <span class="kat-icon" title="HTML & CSS"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M3 9h18M10 13l-2 2 2 2M14 13l2 2-2 2"/></g></svg></span>
                             <h3>Bilder und Tabellen</h3>
                         </div>
                         <p>Bilder einbauen und einen Stundenplan als Tabelle.</p>
@@ -705,14 +800,15 @@
                         </div>
                     </div>
                 </article>
-                <article class="karte">
+                <article class="karte" style="--i:3">
                     <a class="vorschau" href="04-css-farben-und-schrift/" aria-label="Farben und Schrift öffnen">
                         <span class="browser-leiste" aria-hidden="true"><i></i><i></i><i></i><span>04-css-farben-und-schrift</span></span>
                         <img src="vorschau/04-css-farben-und-schrift.webp" alt="Vorschau: Farben und Schrift" width="800" height="500" loading="lazy" decoding="async">
                     </a>
                     <div class="karte-text">
+                        
                         <div class="karte-titel">
-                            <span class="emoji" aria-hidden="true">🎨</span>
+                            <span class="kat-icon" title="HTML & CSS"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M3 9h18M10 13l-2 2 2 2M14 13l2 2-2 2"/></g></svg></span>
                             <h3>Farben und Schrift</h3>
                         </div>
                         <p>Ein Café-Auftritt, mit CSS gestaltet: Farben, Schriften, Abstände.</p>
@@ -722,14 +818,15 @@
                         </div>
                     </div>
                 </article>
-                <article class="karte">
+                <article class="karte" style="--i:4">
                     <a class="vorschau" href="05-box-model/" aria-label="Das Box-Model öffnen">
                         <span class="browser-leiste" aria-hidden="true"><i></i><i></i><i></i><span>05-box-model</span></span>
                         <img src="vorschau/05-box-model.webp" alt="Vorschau: Das Box-Model" width="800" height="500" loading="lazy" decoding="async">
                     </a>
                     <div class="karte-text">
+                        
                         <div class="karte-titel">
-                            <span class="emoji" aria-hidden="true">📦</span>
+                            <span class="kat-icon" title="HTML & CSS"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M3 9h18M10 13l-2 2 2 2M14 13l2 2-2 2"/></g></svg></span>
                             <h3>Das Box-Model</h3>
                         </div>
                         <p>Drei Info-Boxen mit Rahmen, Innen- und Außenabständen.</p>
@@ -742,20 +839,21 @@
             </div>
         </section>
 
-        <section id="javascript" class="abschnitt">
+        <section id="javascript" class="abschnitt" data-kategorie="javascript">
             <div class="abschnitt-kopf">
                 <h2>JavaScript <span class="anzahl">1</span></h2>
                 <p>Programmieren im Browser</p>
             </div>
             <div class="karten">
-                <article class="karte">
+                <article class="karte" style="--i:0">
                     <a class="vorschau" href="javascript-uebungen/01-variablen-und-ausgabe/" aria-label="Variablen und Ausgabe öffnen">
                         <span class="browser-leiste" aria-hidden="true"><i></i><i></i><i></i><span>javascript-uebungen/01-variablen-und-ausgabe</span></span>
                         <img src="vorschau/01-variablen-und-ausgabe.webp" alt="Vorschau: Variablen und Ausgabe" width="800" height="500" loading="lazy" decoding="async">
                     </a>
                     <div class="karte-text">
+                        
                         <div class="karte-titel">
-                            <span class="emoji" aria-hidden="true">🟨</span>
+                            <span class="kat-icon" title="JavaScript"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M7 10l3 2.5L7 15M12.5 15H17"/></g></svg></span>
                             <h3>Variablen und Ausgabe</h3>
                         </div>
                         <p>Die ersten Zeilen JavaScript: Werte speichern und ausgeben.</p>
@@ -790,6 +888,21 @@
         } else {
             elemente.forEach((el) => el.classList.add("sichtbar"));
         }
+
+        // Filter: nur die gewählte Kategorie zeigen
+        const knoepfe = document.querySelectorAll(".filter button");
+        knoepfe.forEach((knopf) => knopf.addEventListener("click", () => {
+            const wahl = knopf.dataset.filter;
+            knoepfe.forEach((k) => k.setAttribute("aria-pressed", String(k === knopf)));
+            document.querySelectorAll(".abschnitt").forEach((s) => {
+                s.hidden = wahl !== "alle" && s.dataset.kategorie !== wahl;
+            });
+        }));
+        // Sprung über die Navigation zeigt wieder alle Abschnitte
+        document.querySelectorAll('a[href^="#"]').forEach((a) => a.addEventListener("click", () => {
+            const alle = document.querySelector('.filter [data-filter="alle"]');
+            if (alle && alle.getAttribute("aria-pressed") !== "true") alle.click();
+        }));
 
         // Navigation: Rand beim Scrollen und aktiven Abschnitt markieren
         const nav = document.querySelector(".nav");
