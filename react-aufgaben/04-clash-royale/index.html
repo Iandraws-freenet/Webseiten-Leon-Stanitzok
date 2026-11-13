@@ -64,7 +64,20 @@
                     <span className="elixier">{karte.elixir}</span>
                     <img src={bild} alt={karte.name} />
                     <h3>{karte.name}</h3>
-                    <p classname="seltenheit">{seltenheit}</p>
+                    <p className="seltenheit">{seltenheit}</p>
+                    {/* ⭐ Erweiterung: Info-Knopf (fertig) */}
+                    <button
+                        className="info-button"
+                        title="Mehr Infos"
+                        onClick={(e) => {
+                            e.stopPropagation();   // Info-Klick legt die Karte NICHT ins Deck
+                            onInfo();
+                        }}
+                    >
+                        ℹ️
+                    </button>
+                </div>
+            );
         }
         
         // =====================================================
